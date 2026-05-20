@@ -9,12 +9,9 @@ C_WHITE = "#FFFFFF"
 
 class SumOfCubesProof(Scene):
     def construct(self):
-        # Set the background to pure black
         self.camera.background_color = BLACK
         unit_size = 0.35 # Scaled to fit in the center third
         
-        # --- 1. Hook with bigger text and new animation ---
-        # Make hook text bigger
         special_text = Tex(r"$\mathbb{Y}$ear 2025 is $\mathbb{S}$pecial!", font_size=60)
         special_text.set_color_by_gradient(BLUE, RED)
         
@@ -22,7 +19,6 @@ class SumOfCubesProof(Scene):
             r"\begin{align*} 2025 &= 1^3+2^3+\dots+9^3 \\ &= (1+2+\dots+9)^2 \end{align*}",
             font_size=48
         )
-        # Make hook text bigger
         question_text = Tex("Or is it?", font_size=48)
         question_text.set_color_by_gradient(BLUE, RED)
         
@@ -31,17 +27,14 @@ class SumOfCubesProof(Scene):
         question_text.next_to(hook_eq, DOWN, buff=0.75)
         hook_group = VGroup(special_text, hook_eq, question_text)
 
-        # Start with the equation already on screen
         self.add(hook_eq)
         self.wait(0.5)
         
-        # Write the first line, then the second line
         self.play(Write(special_text), run_time=0.7)
         self.play(Write(question_text), run_time=0.7)
         self.wait(0.5)
         self.play(FadeOut(hook_group))
 
-        # --- 2. Create and display cubes ---
         initial_cubes_pos = UP * 2.8
         cube1 = self.create_decomposed_cube(1, C_RED, unit_size)
         label1 = MathTex("1^3", color=C_WHITE).next_to(cube1, DOWN)
@@ -62,7 +55,6 @@ class SumOfCubesProof(Scene):
         )
         self.wait(0.2)
         
-        # --- 3. Initial Equation and Transformations ---
         equation_p1 = MathTex("1^3 + 2^3 + 3^3", "=", "?").move_to(DOWN * 3.0)
         self.play(Write(equation_p1), run_time=0.5)
         self.wait(0.2)
@@ -73,7 +65,6 @@ class SumOfCubesProof(Scene):
         final_square_3 = self.animate_gnomon_formation(3, cube3, final_square_2, unit_size)
         self.wait(0.2)
 
-        # --- 4. Reveal Result for n=3 ---
         brace = Brace(final_square_3, DOWN)
         bl1, bl2, bl3 = MathTex("1"), MathTex("2"), MathTex("3")
         brace_labels = VGroup(bl1, bl2, bl3).arrange(RIGHT, buff=unit_size*1.5).next_to(brace, DOWN)
@@ -85,7 +76,6 @@ class SumOfCubesProof(Scene):
         self.play(TransformMatchingTex(equation_p1, equation_p2), run_time=0.7)
         self.wait(0.5)
 
-        # --- 5. Add n=4 Term and Transform ---
         cube4 = self.create_decomposed_cube(4, C_BLUE, unit_size, direction=RIGHT)
         cube4.next_to(equation_p2, UP, buff=0.3)
         
@@ -111,7 +101,6 @@ class SumOfCubesProof(Scene):
         final_square_4 = VGroup(final_square_3, source_units)
         self.wait(0.2)
 
-        # --- 6. Reveal Result for n=4 ---
         new_brace = Brace(final_square_4, DOWN)
         bl4 = MathTex("4")
         new_brace_labels = VGroup(bl1.copy(), bl2.copy(), bl3.copy(), bl4).arrange(RIGHT, buff=unit_size*2.25).next_to(new_brace, DOWN)
@@ -132,13 +121,11 @@ class SumOfCubesProof(Scene):
         )
         self.wait(0.5)
 
-        # --- 7. Generalize to n ---
         final_brace_label = MathTex("1+2+3+\\dots+n").next_to(brace, DOWN)
         self.play(Transform(brace_labels, final_brace_label), run_time=0.7)
         
         final_equation = MathTex("\\sum_{k=1}^{n} k^3", "=", "\\left( \\sum_{k=1}^{n} k \\right)^2").move_to(equation_p3.get_center())
         
-        # Use the same fade transition for consistency
         self.play(
             FadeOut(equation_p3, shift=DOWN*0.2),
             FadeIn(final_equation, shift=UP*0.2),
@@ -146,7 +133,6 @@ class SumOfCubesProof(Scene):
         )
         self.wait(0.5)
 
-        # --- 8. Final Reveal ---
         final_title = Text("Nicomachus's Theorem", font_size=48).to_edge(UP, buff=1.5)
         final_square_group = VGroup(final_square_4, brace, brace_labels)
 

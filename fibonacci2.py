@@ -90,7 +90,7 @@ class GoldenRatioUnfold(ThreeDScene):
             ReplacementTransform(arcs, flat_diagonal_lines),
             run_time=0.8 
         )
-        self.wait(0.2) 
+        self.wait(0.5) 
 
         # --- Scene 4: Transform to 3D Cubes & 3D Line ---
         cubes = VGroup()
