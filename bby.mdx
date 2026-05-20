@@ -1,0 +1,62 @@
+---
+id: vieta-root-jumping
+title: Vieta Root Jumping
+author: USAMO Guide Team
+description: An infinite descent technique for Diophantine equations, using Vieta's formulas to generate strictly smaller solutions.
+prerequisites: ["vietas-formula", "number-theory-basics"]
+---
+
+## Overview
+
+Vieta Jumping (also called root flipping) is an advanced number theory technique and a special case of infinite descent. It is used to solve Diophantine equations where a rational expression in two or more variables is given to be an integer. The core idea: treat that integer as a constant $k$, rearrange into a quadratic in one variable, and use Vieta's formulas to produce a new solution that is strictly smaller. Since positive integers cannot decrease forever, this either forces a contradiction or drives the solution to a checkable base case.
+
+## Derivation
+
+The jump works as follows. Given a relation that can be rearranged into a quadratic in $t$:
+
+$$f(t) = t^2 - (kb)\,t + (b^2 - k) = 0$$
+
+a known integer solution $a$ is one root. Let $x$ be the other root. Vieta's formulas give two expressions for $x$:
+
+- **Sum of roots:** $x + a = kb \implies x = kb - a$. Since $k$, $b$, $a$ are all integers, $x$ is an integer.
+- **Product of roots:** $x \cdot a = b^2 - k \implies x = \dfrac{b^2 - k}{a}$. This form is used to bound $x$ and show $x < a$.
+
+Together these prove $x$ is a positive integer strictly smaller than $a$, so $(x, b)$ is a valid smaller solution — contradicting minimality of $(a, b)$.
+
+## Key Ideas
+
+- **Extremal principle:** Pick the valid pair $(a, b)$ minimizing $a + b$. Showing the new root gives a pair with smaller sum immediately yields the contradiction. This is cleaner than building an explicit infinite descent.
+- **Symmetry and WLOG:** These problems almost always have symmetric equations, so you may assume $a \geq b$ without loss of generality, which is what makes $x < a$ provable.
+- **Bounding the new root:** Use $a \geq b$ to show $x = \frac{b^2-k}{a} \leq \frac{a^2-k}{a} < a$.
+- **Zero as a base case:** If $k$ is not a perfect square then $x \neq 0$; if $k$ is forced to be a square the descent terminates at $x = 0$, proving the claim.
+- **Negative variables:** Standard Vieta Jumping requires the variables to be positive (so that $a + b$ is bounded below). If the problem allows negative integers, first show that negating variables preserves the equation, then assume positivity without loss of generality.
+
+## Worked Examples
+
+**Example 1 (IMO 1988/6).** Let $a, b$ be positive integers with $ab+1 \mid a^2+b^2$. Show that $k = \dfrac{a^2+b^2}{ab+1}$ is a perfect square.
+
+Assume $k$ is not a perfect square and pick the pair $(a,b)$ with $a \geq b > 0$ minimizing $a + b$. Rearrange into a quadratic in $t$:
+
+$$t^2 - kb\,t + (b^2 - k) = 0$$
+
+One root is $a$; let $x$ be the other. By Vieta's: $x = kb - a \in \mathbb{Z}$ and $x = \frac{b^2-k}{a}$.
+
+Since $k$ is not a perfect square, $x \neq 0$. If $x < 0$, substituting back gives $x^2 + k|x|b + b^2 - k > 0$, a contradiction. So $x$ is a positive integer. Since $a \geq b$, we get $x = \frac{b^2-k}{a} < \frac{a^2-k}{a} < a$, so $(x, b)$ is a valid pair with $x + b < a + b$, contradicting minimality. Therefore $k$ must be a perfect square. $\blacksquare$
+
+**Example 2.** Let $a, b$ be positive integers with $ab \mid a^2+b^2+1$. Show that $\dfrac{a^2+b^2+1}{ab} = 3$.
+
+Let $k = \frac{a^2+b^2+1}{ab}$. If $a = b$ then $a^2 \mid 2a^2 + 1$, forcing $a = 1$ and $k = 3$. Now assume $a > b$ and pick the minimal-sum pair. Form the quadratic in $t$:
+
+$$t^2 - kb\,t + (b^2 + 1) = 0$$
+
+One root is $a$; the other is $x = kb - a \in \mathbb{Z}$ and $x = \frac{b^2+1}{a} > 0$. Since $a > b$, we have $x = \frac{b^2+1}{a} < a$, so $(x, b)$ is a strictly smaller valid pair. The descent terminates at base cases that all yield $k = 3$. $\blacksquare$
+
+## Common Pitfalls
+
+- **Forgetting to prove $x > 0$:** The descent only forces a contradiction if the new solution stays in the positive integers. Always verify $x > 0$, or handle $x = 0$ as an explicit base case.
+- **Skipping the $a = b$ case:** The argument assumes $a > b$ to get $x < a$. Always check the equality case first — it often forces the answer immediately.
+- **Negative variables:** If the problem doesn't restrict to positive integers, the extremal principle fails because $a + b$ has no lower bound. Establish positivity first.
+
+## Practice Problems
+
+<Problems problems="practice" />
