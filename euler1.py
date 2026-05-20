@@ -4,9 +4,9 @@ from manim import *
 class EulersFormulaReels(ThreeDScene):
     def construct(self):
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 1.  STATIC SETUP — everything already on screen at frame 0
-        # ═══════════════════════════════════════════════════════════════════
+        
+        
+        
         title = MathTex(r"\mathbb{E}\text{uler's } \mathbb{F}\text{ormula}").scale(0.9)
         title.set_color_by_gradient(GREEN, BLUE, PURPLE)
         title.to_edge(UP, buff=0.5)
@@ -37,13 +37,13 @@ class EulersFormulaReels(ThreeDScene):
         self.add_fixed_in_frame_mobjects(title, formula)
         self.add(title, formula, axes, re_label, im_label)
 
-        # Slow ambient rotation from frame 0.
-        # rate is in rad/s; 0.04 ≈ 2.3°/s — leisurely but clearly moving.
+        
+        
         self.begin_ambient_camera_rotation(rate=0.04)
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 2.  cos & sin CURVES — drawn simultaneously
-        # ═══════════════════════════════════════════════════════════════════
+        
+        
+        
         cos_curve = axes.plot_parametric_curve(
             lambda t: np.array([t, np.cos(t), 0]),
             t_range=[0, 14], color=BLUE,
@@ -64,9 +64,9 @@ class EulersFormulaReels(ThreeDScene):
         self.play(Create(cos_curve), Create(sin_curve), run_time=1.2)
         self.play(FadeIn(cos_label), FadeIn(sin_label), run_time=0.5)
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 3.  UNIT CIRCLE + snap geometry + ALL pulses simultaneously
-        # ═══════════════════════════════════════════════════════════════════
+        
+        
+        
         unit_circle = axes.plot_parametric_curve(
             lambda theta: np.array([0, np.cos(theta), np.sin(theta)]),
             t_range=[0, 2 * PI],
@@ -112,9 +112,9 @@ class EulersFormulaReels(ThreeDScene):
             run_time=0.3,
         )
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 4.  DYNAMIC TRACE ELEMENTS
-        # ═══════════════════════════════════════════════════════════════════
+        
+        
+        
         t_tracker = ValueTracker(0.01)
 
         helix = always_redraw(lambda: axes.plot_parametric_curve(
@@ -179,10 +179,10 @@ class EulersFormulaReels(ThreeDScene):
         self.add(helix, dot_3d, radius_vector, dot_2d,
                  extrusion_line, line_cos, line_sin, label_group)
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 5.  SWEEP 1 — trace to x=π  +  camera to flat 2-D circle view
-        # ═══════════════════════════════════════════════════════════════════
-        # Stop ambient drift so explicit camera animation has full control.
+        
+        
+        
+        
         self.stop_ambient_camera_rotation()
         self.play(
             t_tracker.animate(rate_func=linear).set_value(PI),
@@ -191,15 +191,15 @@ class EulersFormulaReels(ThreeDScene):
             run_time=5,
         )
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 6.  EULER'S IDENTITY DERIVATION
-        #     Camera pauses briefly at the flat view, then ambient rotation
-        #     resumes partway through the derivation steps.
-        # ═══════════════════════════════════════════════════════════════════
+        
+        
+        
+        
+        
 
         EQ_POS = DOWN * 2.1
 
-        # ── Step A:  e^{iπ} = cos π + i·sin π ───────────────────────────
+        
         step_a = MathTex(
             r"e^{i\pi}", r"=", r"\cos\pi", r"+", r"i\cdot\sin\pi",
             font_size=34,
@@ -220,11 +220,11 @@ class EulersFormulaReels(ThreeDScene):
         self.remove(formula_copy)
         self.wait(0.2)
 
-        # Camera has been still since sweep-1 ended — resume slow rotation
-        # now, mid-derivation, so it's clearly moving before step D lands.
+        
+        
         self.begin_ambient_camera_rotation(rate=0.04)
 
-        # ── Step B:  e^{iπ} = −1 + i·0 ──────────────────────────────────
+        
         step_b = MathTex(
             r"e^{i\pi}", r"=", r"-1", r"+", r"i\cdot 0",
             font_size=34,
@@ -239,7 +239,7 @@ class EulersFormulaReels(ThreeDScene):
         self.play(ReplacementTransform(step_a, step_b), run_time=0.6)
         self.wait(0.2)
 
-        # ── Step C:  e^{iπ} = −1 ─────────────────────────────────────────
+        
         step_c = MathTex(
             r"e^{i\pi}", r"=", r"-1",
             font_size=34,
@@ -252,7 +252,7 @@ class EulersFormulaReels(ThreeDScene):
         self.play(ReplacementTransform(step_b, step_c), run_time=0.6)
         self.wait(0.25)
 
-        # ── Step D:  e^{iπ} + 1 = 0  (white, inside teal box) ───────────
+        
         step_d = MathTex(
             r"e^{i\pi}", r"+", r"1", r"=", r"0",
             font_size=38,
@@ -265,8 +265,8 @@ class EulersFormulaReels(ThreeDScene):
         self.play(ReplacementTransform(step_c, step_d), run_time=0.75)
         self.wait(0.5)
 
-        # ── Box + "Euler's Identity" label  (matches screenshot style) ───
-        # Dark teal fill, rounded corners, cyan/teal border, white italic label.
+        
+        
         TEAL_DARK   = ManimColor("#0d2b35")
         TEAL_BORDER = ManimColor("#3bbfcf")
 
@@ -305,10 +305,10 @@ class EulersFormulaReels(ThreeDScene):
             run_time=0.5,
         )
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 7.  SWEEP 2 — finish helix to t=14, pull back to isometric.
-        #     Ambient rotation is already running. Fade out identity early.
-        # ═══════════════════════════════════════════════════════════════════
+        
+        
+        
+        
         
 
         self.play(

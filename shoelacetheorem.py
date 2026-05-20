@@ -2,10 +2,10 @@ from manim import *
 
 class ShoelaceTheorem(Scene):
     def construct(self):
-        # Set background color
+        
         self.camera.background_color = BLACK
         
-        # Define polygon vertices (non-convex quadrilateral for clear signed area demonstration)
+        
         vertices = [
             np.array([2, 1, 0]),
             np.array([1, 3, 0]),
@@ -13,7 +13,7 @@ class ShoelaceTheorem(Scene):
             np.array([-2, -1, 0])
         ]
         
-        # Create axes (subtle)
+        
         axes = Axes(
             x_range=[-3, 3, 1],
             y_range=[-3, 3, 1],
@@ -22,21 +22,21 @@ class ShoelaceTheorem(Scene):
             axis_config={"color": GREY_B, "stroke_width": 1}
         )
         
-        # Create grid (very subtle)
+        
         grid = NumberPlane(
             x_range=[-3, 3, 1],
             y_range=[-3, 3, 1],
             background_line_style={"stroke_color": GREY_B, "stroke_width": 0.5, "stroke_opacity": 0.3}
         )
         
-        # Introduction: The Problem (0-5s)
+        
         self.play(Create(grid), Create(axes), run_time=1)
         
-        # Create polygon
+        
         polygon = Polygon(*vertices, color=WHITE, stroke_width=3, fill_opacity=0)
         vertex_dots = VGroup(*[Dot(v, color=WHITE, radius=0.08) for v in vertices])
         
-        # Highlight first vertex
+        
         first_vertex = Dot(vertices[0], color=BLUE_C, radius=0.1)
         
         self.play(
@@ -46,16 +46,16 @@ class ShoelaceTheorem(Scene):
             run_time=1.5
         )
         
-        # Display "Area = ?" 
+        
         area_question = MathTex("A = ?", color=WHITE).scale(1.2)
         area_question.move_to(polygon.get_center())
         self.play(Write(area_question), run_time=1)
         self.wait(1)
         
-        # Introducing Coordinates (5-8s)
+        
         self.play(FadeOut(area_question), run_time=0.5)
         
-        # Label vertices with coordinates
+        
         coord_labels = VGroup()
         coord_values = [(2, 1), (1, 3), (-1, 2), (-2, -1)]
         
@@ -64,7 +64,7 @@ class ShoelaceTheorem(Scene):
             label.next_to(vertex, UP + RIGHT * 0.3)
             coord_labels.add(label)
             
-            # Dashed lines to axes
+            
             x_line = DashedLine(vertex, [vertex[0], 0, 0], color=GREY_B, stroke_width=1)
             y_line = DashedLine(vertex, [0, vertex[1], 0], color=GREY_B, stroke_width=1)
             
@@ -76,30 +76,30 @@ class ShoelaceTheorem(Scene):
             )
             self.play(FadeOut(x_line), FadeOut(y_line), run_time=0.3)
         
-        # The "Shoelace" Pattern & Signed Areas (8-25s)
+        
         origin_dot = Dot(ORIGIN, color=WHITE, radius=0.1)
         origin_dot.set_glow_opacity(0.8)
         self.play(Create(origin_dot), run_time=0.5)
         
-        # Storage for triangles and their areas
+        
         triangle_areas = []
         triangle_shapes = VGroup()
         diagonal_lines = VGroup()
         
-        # Process each triangle
+        
         for i in range(len(vertices)):
             j = (i + 1) % len(vertices)
             v1, v2 = vertices[i], vertices[j]
             
-            # Create triangle from origin
+            
             triangle = Polygon(ORIGIN, v1, v2, stroke_width=0)
             
-            # Calculate signed area
+            
             x1, y1 = v1[0], v1[1]
             x2, y2 = v2[0], v2[1]
             signed_area = 0.5 * (x1 * y2 - x2 * y1)
             
-            # Color based on sign
+            
             if signed_area > 0:
                 triangle.set_fill(BLUE, opacity=0.4)
             else:
@@ -109,45 +109,45 @@ class ShoelaceTheorem(Scene):
             triangle_areas.append(signed_area)
             triangle_shapes.add(triangle)
             
-            # Draw lines from origin to vertices
+            
             line1 = Line(ORIGIN, v1, color=WHITE, stroke_width=2)
             line2 = Line(ORIGIN, v2, color=WHITE, stroke_width=2)
             
-            # Draw diagonal (the "shoelace" line)
+            
             diagonal = Line(v1, v2, color=GREEN_C if signed_area > 0 else RED_C, stroke_width=3)
             diagonal.set_glow_opacity(0.8)
             diagonal_lines.add(diagonal)
             
-            # Animate the triangle formation
+            
             self.play(Create(line1), Create(line2), run_time=0.4)
             self.play(Create(diagonal), run_time=0.4)
             self.play(FadeIn(triangle), run_time=0.6)
             
-            # Show the area calculation briefly
+            
             area_text = MathTex(f"\\frac{{1}}{{2}}({x1} \\cdot {y2} - {x2} \\cdot {y1})", color=WHITE).scale(0.6)
             area_text.next_to(triangle.get_center(), DOWN)
             self.play(Write(area_text), run_time=0.8)
             self.play(FadeOut(area_text), run_time=0.4)
             
-            # Fade out the construction lines but keep diagonal
+            
             self.play(FadeOut(line1), FadeOut(line2), run_time=0.3)
         
-        # Show all triangles together with cancellation effect
+        
         self.wait(1)
         
-        # Create overlapping effect to show cancellation
+        
         overlap_group = VGroup()
         for i, triangle in enumerate(triangle_shapes):
             overlap_group.add(triangle)
         
-        # Show the magical cancellation - areas outside polygon cancel out
+        
         self.play(
             *[triangle.animate.set_fill_opacity(0.6) for triangle in triangle_shapes],
             run_time=1
         )
         
-        # The Formula & Final Area (25-40s)
-        # Fade out individual triangles and show final polygon area
+        
+        
         final_polygon_fill = polygon.copy()
         final_polygon_fill.set_fill(PURPLE_C, opacity=0.6)
         final_polygon_fill.set_glow_opacity(0.8)
@@ -159,14 +159,14 @@ class ShoelaceTheorem(Scene):
             run_time=1.5
         )
         
-        # Display the Shoelace formula
+        
         formula = MathTex(
             r"A = \frac{1}{2} \left| \sum_{i=1}^{n} (x_i y_{i+1} - x_{i+1} y_i) \right|",
             color=WHITE
         ).scale(0.9)
         formula.to_edge(DOWN, buff=0.5)
         
-        # Highlight the terms in the formula
+        
         formula_colored = MathTex(
             r"A = \frac{1}{2} \left| \sum_{i=1}^{n} (",
             r"x_i y_{i+1}",
@@ -182,24 +182,24 @@ class ShoelaceTheorem(Scene):
         self.play(Write(formula), run_time=2)
         self.play(Transform(formula, formula_colored), run_time=1.5)
         
-        # Add title
+        
         title = MathTex("\\text{Shoelace Theorem}", color=GOLD).scale(1.3)
         title.to_edge(UP, buff=0.5)
         title.set_glow_opacity(0.8)
         
         self.play(Write(title), run_time=1.5)
         
-        # Final dramatic glow effect
+        
         self.play(
             final_polygon_fill.animate.set_glow_opacity(1.0),
             title.animate.set_glow_opacity(1.0),
             run_time=1
         )
         
-        # Hold the final scene
+        
         self.wait(2)
         
-        # Clean Exit (40-45s)
+        
         all_objects = VGroup(
             grid, axes, polygon, vertex_dots, coord_labels, 
             origin_dot, final_polygon_fill, formula, title
@@ -213,4 +213,3 @@ class ShoelaceTheorem(Scene):
         
         self.wait(0.5)
 
-# To render: manim -pql shoelace_theorem.py ShoelaceTheorem

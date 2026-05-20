@@ -8,24 +8,24 @@ Render full video:
 from manim import *
 import math as _math
 
-# ─────────────────────────────────────────────────────────────
-#  Palette
-# ─────────────────────────────────────────────────────────────
-C_CURVE  = "#F48FB1"   # soft rose        – curve
-C_AREA   = "#4DB6AC"   # teal-green       – shaded region
-C_EDGE   = "#FFB74D"   # warm amber       – moving vertical
-C_TICK   = "#CE93D8"   # lavender         – a / x tick marks
-C_FTC1   = "#80DEEA"   # cyan             – FTC 1 box
-C_MVT    = "#A5D6A7"   # sage green       – MVT box
-C_FINAL  = "#EF9A9A"   # coral-pink       – final box / FTC2 label
-C_STRIKE = "#FF5252"   # vivid red        – strikethroughs
+
+
+
+C_CURVE  = "#F48FB1"   
+C_AREA   = "#4DB6AC"   
+C_EDGE   = "#FFB74D"   
+C_TICK   = "#CE93D8"   
+C_FTC1   = "#80DEEA"   
+C_MVT    = "#A5D6A7"   
+C_FINAL  = "#EF9A9A"   
+C_STRIKE = "#FF5252"   
 C_WHITE  = "#FFFFFF"
 C_GRAY   = "#607D8B"
 BG       = "#000000"
 
-# ─────────────────────────────────────────────────────────────
-#  Layout
-# ─────────────────────────────────────────────────────────────
+
+
+
 TITLE_Y   =  3.30
 DIV_Y     =  2.85
 AX_DEF_Y  =  2.48
@@ -35,24 +35,24 @@ X_VAL     =  1.10
 CURVE_START = -2.0
 CURVE_END   =  3.2
 
-# Equation rows — equally spaced below eq_Ax (anchor 2.48) to -3.60
-# 4 rows, 5 gaps: step = (2.48 - (-3.60)) / 5 = 1.216 ≈ 1.22
-#   FTC1: 1.26,  MVT: 0.04,  line1/2/3: -1.18,  final_eq: -2.40
-EQ_Y = [1.26, 0.04, -1.18, -2.40, -3.60]
-#        ftc1  mvt   line    final  (unused; ftc2 lbl placed via next_to)
 
-# ─────────────────────────────────────────────────────────────
-#  f(x) = -0.18·x³ + 0.4·x² + 1.6   — a clear cubic shape
-#  stays positive on [-2.5, 2.5]: f(-2.5)≈1.35, f(2.5)≈1.05
-#  has a visible local max near x≈1.5 and descends left
-# ─────────────────────────────────────────────────────────────
+
+
+EQ_Y = [1.26, 0.04, -1.18, -2.40, -3.60]
+
+
+
+
+
+
+
 def f(x):
     return -0.18 * x**3 + 0.4 * x**2 + 1.6
 
 
-# ─────────────────────────────────────────────────────────────
-#  Helpers
-# ─────────────────────────────────────────────────────────────
+
+
+
 def make_axes():
     ax = Axes(
         x_range=[-3.2, 3.2, 1],
@@ -77,7 +77,7 @@ def make_curve(ax):
 
 
 def make_title():
-    # Line 1: "Fundamental Theorem"
+    
     line1_words = ["Fundamental", "Theorem"]
     line1_pieces = []
     for word in line1_words:
@@ -86,7 +86,7 @@ def make_title():
         line1_pieces.append(VGroup(bb, tail).arrange(RIGHT, buff=0.03))
     line1 = VGroup(*line1_pieces).arrange(RIGHT, buff=0.22)
 
-    # Line 2: "of Calculus (2)"
+    
     of_text  = Text("of", font_size=36, color=C_WHITE)
     cal_bb   = MathTex(r"\mathbb{C}", font_size=38, color=C_WHITE)
     cal_tail = Text("alculus", font_size=36, color=C_WHITE)
@@ -121,9 +121,9 @@ def strikethrough(mob, color=C_STRIKE, width=3.2):
                 color=color, stroke_width=width)
 
 
-# ─────────────────────────────────────────────────────────────
-#  Main scene
-# ─────────────────────────────────────────────────────────────
+
+
+
 class FundamentalTheoremOfCalculus(Scene):
 
     def setup(self):
@@ -131,7 +131,7 @@ class FundamentalTheoremOfCalculus(Scene):
 
     def construct(self):
 
-        # ══ Title + divider + axes + curve  — all at once ═══════
+        
         title = make_title()
         div   = thin_divider()
         ax    = make_axes()
@@ -140,7 +140,7 @@ class FundamentalTheoremOfCalculus(Scene):
         label_fx = MathTex(r"y = f(x)", color=C_CURVE, font_size=22)
         label_fx.move_to(ax.c2p(-2.3, 2.85))
 
-        # Draw title/divider simultaneously with axes/curve
+        
         self.play(
             AnimationGroup(
                 FadeIn(title, shift=UP * 0.12),
@@ -156,7 +156,7 @@ class FundamentalTheoremOfCalculus(Scene):
         )
         self.play(FadeIn(label_fx), run_time=0.4)
 
-        # ══ Tick a ══════════════════════════════════════════════
+        
         tick_a = Line(ax.c2p(A_VAL, -0.08), ax.c2p(A_VAL, 0.08),
                       color=C_TICK, stroke_width=2.2)
         label_a = MathTex(r"a", color=C_TICK, font_size=22)
@@ -165,7 +165,7 @@ class FundamentalTheoremOfCalculus(Scene):
         self.play(Create(tick_a), FadeIn(label_a))
         self.wait(0.2)
 
-        # ══ Tick x, left boundary, sweep area + eq_Ax together ══
+        
         tick_x = Line(ax.c2p(X_VAL, -0.08), ax.c2p(X_VAL, 0.08),
                       color=C_TICK, stroke_width=2.2)
         label_x = MathTex(r"x", color=C_TICK, font_size=22)
@@ -173,17 +173,17 @@ class FundamentalTheoremOfCalculus(Scene):
 
         self.play(Create(tick_x), FadeIn(label_x))
 
-        # Left boundary appears once
+        
         vert_a_line = Line(ax.c2p(A_VAL, 0), ax.c2p(A_VAL, f(A_VAL)),
                            color=C_EDGE, stroke_width=2.0)
         self.play(Create(vert_a_line))
 
-        # A(x) definition — fade in simultaneously with the area sweep start
+        
         eq_Ax = MathTex(r"A(x) = \int_a^x f(t)\,dt",
                         color=C_WHITE, font_size=23)
         eq_Ax.move_to(UP * AX_DEF_Y)
 
-        # Seed area and right vertical
+        
         N_STEPS  = 60
         fill_dur = 1.3
         dt       = fill_dur / N_STEPS
@@ -194,7 +194,7 @@ class FundamentalTheoremOfCalculus(Scene):
                            color=C_EDGE, stroke_width=2.0)
         self.add(area, vert_x_line)
 
-        # Fade in eq_Ax on the first frame of the sweep
+        
         self.play(FadeIn(eq_Ax, shift=DOWN * 0.07), run_time=0.45)
 
         xs = [A_VAL + (X_VAL - A_VAL) * i / N_STEPS for i in range(1, N_STEPS + 1)]
@@ -211,7 +211,7 @@ class FundamentalTheoremOfCalculus(Scene):
 
         self.wait(0.4)
 
-        # ══ SCENE 3 – FTC 1 box ══════════════════════════════════
+        
         self.play(FadeOut(VGroup(label_fx, vert_a_line, vert_x_line)), run_time=0.5)
 
         ftc1_eq = MathTex(
@@ -226,7 +226,7 @@ class FundamentalTheoremOfCalculus(Scene):
         self.play(Create(ftc1_bg), FadeIn(ftc1_lbl))
         self.wait(0.4)
 
-        # ══ SCENE 4 – MVT box ════════════════════════════════════
+        
         mvt_eq = MathTex(
             r"\text{if }G'(x)=f(x),\ \text{then }G(x)=A(x)+C",
             color=C_WHITE, font_size=23
@@ -239,15 +239,15 @@ class FundamentalTheoremOfCalculus(Scene):
         self.play(Create(mvt_bg), FadeIn(mvt_lbl))
         self.wait(0.4)
 
-        # ══ SCENE 5 – Algebraic chain ════════════════════════════
+        
         self.play(
             FadeOut(VGroup(tick_a, label_a, tick_x, label_x,
                            ax, curve, area)),
             run_time=0.6
         )
 
-        # Slide equations up — keep their boxes and labels, moving everything together.
-        # We shift by the delta needed to bring each *equation* to its target Y.
+        
+        
         ftc1_group = VGroup(ftc1_eq, ftc1_bg, ftc1_lbl)
         mvt_group  = VGroup(mvt_eq,  mvt_bg,  mvt_lbl)
 
@@ -260,17 +260,17 @@ class FundamentalTheoremOfCalculus(Scene):
             run_time=0.65
         )
 
-        # — 5a: G(b)-G(a) = [A(b)+C]-[A(a)+C] ———————————————
+        
         line1 = MathTex(
-            r"G(b) - G(a)",   # 0
-            r"=",              # 1
-            r"\bigl[A(b)",     # 2
-            r"+",              # 3
-            r"C\bigr]",       # 4  ← strike
-            r"-",              # 5
-            r"\bigl[A(a)",     # 6
-            r"+",              # 7
-            r"C\bigr]",       # 8  ← strike
+            r"G(b) - G(a)",   
+            r"=",              
+            r"\bigl[A(b)",     
+            r"+",              
+            r"C\bigr]",       
+            r"-",              
+            r"\bigl[A(a)",     
+            r"+",              
+            r"C\bigr]",       
             font_size=25, color=C_WHITE
         )
         line1.move_to(UP * EQ_Y[2])
@@ -283,13 +283,13 @@ class FundamentalTheoremOfCalculus(Scene):
         self.play(Create(st_c1), Create(st_c2), run_time=0.65)
         self.wait(0.35)
 
-        # — 5b: collapse → A(b) - A(a) ——————————————————————
+        
         line2 = MathTex(
-            r"G(b) - G(a)",   # 0
-            r"=",              # 1
-            r"A(b)",           # 2
-            r"-",              # 3
-            r"A(a)",           # 4
+            r"G(b) - G(a)",   
+            r"=",              
+            r"A(b)",           
+            r"-",              
+            r"A(a)",           
             font_size=25, color=C_WHITE
         )
         line2.move_to(line1.get_center())
@@ -305,13 +305,13 @@ class FundamentalTheoremOfCalculus(Scene):
         )
         self.wait(0.4)
 
-        # — 5c: expand A(b), A(a) → integrals ————————————————
+        
         line3 = MathTex(
-            r"G(b) - G(a)",           # 0
-            r"=",                      # 1
-            r"\int_a^b\! f(t)\,dt",   # 2
-            r"-",                      # 3
-            r"\int_a^a\! f(t)\,dt",   # 4
+            r"G(b) - G(a)",           
+            r"=",                      
+            r"\int_a^b\! f(t)\,dt",   
+            r"-",                      
+            r"\int_a^a\! f(t)\,dt",   
             font_size=25, color=C_WHITE
         )
         line3.move_to(line2.get_center())
@@ -324,13 +324,13 @@ class FundamentalTheoremOfCalculus(Scene):
         )
         self.wait(0.45)
 
-        # — 5d: replace ∫_a^a f(t)dt with 0, then fade out "- 0" —
+        
         line3b = MathTex(
-            r"G(b) - G(a)",           # 0
-            r"=",                      # 1
-            r"\int_a^b\! f(t)\,dt",   # 2
-            r"-",                      # 3
-            r"0",                      # 4  ← replaced
+            r"G(b) - G(a)",           
+            r"=",                      
+            r"\int_a^b\! f(t)\,dt",   
+            r"-",                      
+            r"0",                      
             font_size=25, color=C_WHITE
         )
         line3b.move_to(line3.get_center())
@@ -352,22 +352,22 @@ class FundamentalTheoremOfCalculus(Scene):
         )
         self.wait(0.35)
 
-        # ══ SCENE 6 – Swap sides in-place and box the result ════════
-        # Surviving mobs from line3b (all at EQ_Y[2]):
-        #   line3b[0]  "G(b) - G(a)"   (LHS)
-        #   line3b[1]  "="
-        #   line3b[2]  "∫_a^b f(t)dt"  (RHS)
-        # Swap them into: ∫_a^b f(t)dt = G(b)-G(a)  — still at EQ_Y[2].
+        
+        
+        
+        
+        
+        
 
         final_eq = MathTex(
-            r"\int_a^b f(t)\,dt",   # 0  ← was RHS
-            r"=",                    # 1
-            r"G(b) - G(a)",         # 2  ← was LHS
+            r"\int_a^b f(t)\,dt",   
+            r"=",                    
+            r"G(b) - G(a)",         
             font_size=25, color=C_WHITE
         )
-        final_eq.move_to(UP * EQ_Y[2])   # stays at the derivation line row — no move
+        final_eq.move_to(UP * EQ_Y[2])   
 
-        # Integral slides left, G(b)-G(a) slides right, = stays
+        
         self.play(
             ReplacementTransform(line3b[2], final_eq[0]),
             ReplacementTransform(line3b[1], final_eq[1]),
@@ -376,7 +376,7 @@ class FundamentalTheoremOfCalculus(Scene):
         )
         self.wait(0.3)
 
-        # Box the swapped result
+        
         final_box = SurroundingRectangle(
             final_eq, color=C_FINAL,
             stroke_width=2.0, buff=0.20, corner_radius=0.10

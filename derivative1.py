@@ -1,7 +1,7 @@
 from manim import *
 import numpy as np
 
-# Define custom colors
+
 GREEN_C = "#2ECC71"
 CYAN_C = "#5DADE2"
 RED_C = "#E74C3C"
@@ -12,14 +12,14 @@ BLUE = "#3498DB"
 
 class DifferentiationConcept(Scene):
     def construct(self):
-        # Set the background color to solid black
+        
         self.camera.background_color = "#000000"
 
-        # --- TeX Template for \cancel command ---
+        
         cancel_template = TexTemplate()
         cancel_template.add_to_preamble(r"\usepackage{cancel}")
 
-        # --- 1. Title and Graph Setup ---
+        
         title = MathTex(r"\mathbb{L}\text{imit } \mathbb{D}\text{efinition of a } \mathbb{D}\text{erivative}", color=CREAM_C, font_size=40)
         title.set_color_by_gradient(RED, BLUE)
         title.to_edge(UP, buff=0.1)
@@ -38,7 +38,7 @@ class DifferentiationConcept(Scene):
         self.play(Create(axes), Create(graph))
         self.wait(0.5)
 
-        # --- 2. Secant Line ---
+        
         x1_val, x2_val = 2.0, 7.0
          
         dot1 = Dot(axes.c2p(x1_val, func(x1_val)), color=RED_C)
@@ -64,7 +64,7 @@ class DifferentiationConcept(Scene):
         self.play(Write(VGroup(slope_formula, slope_box)))
         self.wait(1)
 
-        # --- 3. Functional Notation ---
+        
         h_val = x2_val - x1_val
         label1_new = MathTex("(x, f(x))", color=CREAM_C, font_size=30).next_to(dot1, UL, buff=0.1)
         label2_new = MathTex("(x+h, f(x+h))", color=CREAM_C, font_size=30).next_to(dot2, UP, buff=0.15)
@@ -84,7 +84,7 @@ class DifferentiationConcept(Scene):
         self.play(GrowFromCenter(brace), Write(h_label))
         self.wait(1)
          
-        # --- 4. Transforming the Formula (with a smoother, faster cancellation) ---
+        
         formula_functional_long = MathTex(r"\text{Slope} = \frac{f(x+h) - f(x)}{(x+h) - x}", font_size=36).move_to(formula_position)
         box_long = SurroundingRectangle(formula_functional_long, buff=0.2, color=CYAN_C)
         self.play(ReplacementTransform(slope_formula, formula_functional_long), ReplacementTransform(slope_box, box_long))
@@ -116,12 +116,12 @@ class DifferentiationConcept(Scene):
         )
         self.wait(0.5)
          
-        # --- 5. The Limit Process ---
+        
         h_tracker = ValueTracker(h_val)
          
         dot2.add_updater(lambda d: d.move_to(axes.c2p(x1_val + h_tracker.get_value(), func(x1_val + h_tracker.get_value()))))
         
-        # MODIFICATION: Added set_opacity to the label's updater to make it fade out
+        
         label2_new.add_updater(
             lambda m: m.next_to(dot2, UP, buff=0.15).set_opacity(np.clip(h_tracker.get_value() / 2.0, 0, 1))
         )
@@ -149,7 +149,7 @@ class DifferentiationConcept(Scene):
         for mobj in mobjects_to_clear:
             mobj.clear_updaters(recursive=True)
 
-        # --- 6. Revealing the Limit Formula ---
+        
         limit_formula = MathTex(r"\text{Slope} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}", font_size=40).move_to(formula_position)
         box_final = SurroundingRectangle(limit_formula, buff=0.2, color=CYAN_C)
         self.play(
@@ -159,25 +159,25 @@ class DifferentiationConcept(Scene):
         )
         self.wait(0.5)
 
-        # --- 7. Final Scene: Isolate and Define the Derivative (Corrected) ---
-        # Group all elements related to the graph that need to be faded out
+        
+        
         graph_elements = VGroup(
             axes, graph, dot1, dot2, label1_new, label2_new, secant_line, lines_1
         )
         slope_expression = VGroup(limit_formula, box_final)
 
-        # Fade out all graph elements simultaneously
+        
         self.play(FadeOut(graph_elements))
         
         self.play(slope_expression.animate.move_to(ORIGIN))
         self.wait(0.5)
 
-        # Create the final derivative formula, already centered
+        
         derivative_formula = MathTex(r"\frac{d}{dx}f(x) = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}", font_size=40).move_to(ORIGIN)
-        # Create a new box that perfectly fits the final formula
+        
         derivative_box = SurroundingRectangle(derivative_formula, buff=0.2, color=CYAN_C)
 
-        # Animate the final transformation
+        
         self.play(
             TransformMatchingTex(limit_formula, derivative_formula, key_map={"Slope": r"\frac{d}{dx}f(x)"}),
             ReplacementTransform(box_final, derivative_box)

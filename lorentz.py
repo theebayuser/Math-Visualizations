@@ -2,11 +2,11 @@ from manim import *
 
 class LorentzTransformationDerivation(Scene):
     def construct(self):
-        # Set default text color
+        
         Tex.set_default(color=WHITE)
         MathTex.set_default(color=WHITE)
 
-        # --- Title Scene ---
+        
         title = Tex("Elegant Derivation of the", "Lorentz Transformation")
         title[0].scale(1.2)
         title[1].scale(1.5).next_to(title[0], DOWN).set_color(BLUE_C)
@@ -15,18 +15,18 @@ class LorentzTransformationDerivation(Scene):
         self.play(FadeOut(title))
         self.wait(1)
 
-        # --- Part 1: The Light Clock ---
+        
         self.show_light_clock()
         self.show_moving_light_clock()
 
-        # --- Part 2: Time Dilation Derivation ---
+        
         self.derive_time_dilation()
 
-        # --- Part 3: Lorentz Transformation for x' and t' ---
+        
         self.derive_x_prime()
         self.derive_t_prime()
 
-        # --- Part 4: The Grand Finale ---
+        
         self.show_final_equations()
         
         self.wait(3)
@@ -35,12 +35,12 @@ class LorentzTransformationDerivation(Scene):
         """Scene 1: The Light Clock in the stationary frame S."""
         title = Tex("Part 1: The Light Clock (Stationary Frame S)").to_edge(UP)
         
-        # Create the clock
+        
         mirror_top = Line(LEFT * 2, RIGHT * 2, color=GRAY_A).shift(UP * 2)
         mirror_bottom = Line(LEFT * 2, RIGHT * 2, color=GRAY_A).shift(DOWN * 2)
         mirrors = VGroup(mirror_top, mirror_bottom)
         
-        # Labels
+        
         distance_label = Brace(Line(mirror_top.get_right(), mirror_bottom.get_right()), RIGHT)
         L_label = distance_label.get_tex("L")
 
@@ -48,14 +48,14 @@ class LorentzTransformationDerivation(Scene):
         self.play(Create(mirrors), Create(distance_label), Write(L_label))
         self.wait(1)
 
-        # Animate photon
+        
         photon = Dot(mirror_bottom.get_center(), color=YELLOW, radius=0.1)
         self.play(FadeIn(photon))
         
-        # Equations for stationary frame
+        
         equation = MathTex(r"\Delta t = \frac{2L}{c}").next_to(mirrors, DOWN, buff=1)
 
-        # Animation
+        
         self.play(photon.animate.move_to(mirror_top.get_center()), run_time=1)
         self.play(photon.animate.move_to(mirror_bottom.get_center()), run_time=1)
         self.play(Write(equation))
@@ -72,7 +72,7 @@ class LorentzTransformationDerivation(Scene):
         title = Tex("The Light Clock (Moving Frame S')").to_edge(UP)
         self.play(Write(title))
 
-        # Create the moving clock and path
+        
         start_pos = LEFT * 4
         end_pos = RIGHT * 4
         
@@ -82,14 +82,14 @@ class LorentzTransformationDerivation(Scene):
 
         photon = Dot(mirror_bottom.get_center(), color=YELLOW, radius=0.1)
         
-        # Diagonal path
+        
         path_up = Line(mirror_bottom.get_start(), mirror_top.get_center())
         path_down = Line(mirror_top.get_center(), mirror_bottom.get_end())
         
         self.play(FadeIn(mirrors, photon))
         self.wait(1)
 
-        # Animate movement and photon path
+        
         self.play(
             mirrors.animate.move_to(end_pos),
             photon.animate.move_to(mirror_top.get_center()),
@@ -102,8 +102,8 @@ class LorentzTransformationDerivation(Scene):
         )
         self.play(FadeOut(photon))
         
-        # Draw the triangle for analysis
-        mirrors.move_to(ORIGIN) # Reset position for clarity
+        
+        mirrors.move_to(ORIGIN) 
         triangle = Polygon(
             mirror_bottom.get_left(), 
             mirror_top.get_center(), 
@@ -112,7 +112,7 @@ class LorentzTransformationDerivation(Scene):
             stroke_width=3
         )
         
-        # Triangle labels
+        
         base = Line(mirror_bottom.get_left(), mirror_bottom.get_right())
         height = DashedLine(mirror_top.get_center(), mirror_bottom.get_center())
         hypotenuse = Line(mirror_bottom.get_left(), mirror_top.get_center())
@@ -134,19 +134,19 @@ class LorentzTransformationDerivation(Scene):
         title = Tex("Part 2: Deriving Time Dilation").to_edge(UP)
         self.play(Write(title))
 
-        # Pythagorean theorem
+        
         pythag_eq = MathTex("D^2", "=", "L^2", "+", r"\left(\frac{v \Delta t'}{2}\right)^2")
         self.play(Write(pythag_eq))
         self.wait(1)
 
-        # Substitutions
+        
         sub_eq_1 = MathTex(r"\left(\frac{c \Delta t'}{2}\right)^2", "=", r"\left(\frac{c \Delta t}{2}\right)^2", "+", r"\left(\frac{v \Delta t'}{2}\right)^2")
         sub_eq_1.shift(DOWN*1.5)
         
         self.play(TransformMatchingTex(pythag_eq.copy(), sub_eq_1, path_arc=PI/2))
         self.wait(2)
         
-        # Algebraic steps
+        
         step_1 = MathTex(r"c^2 (\Delta t')^2 = c^2 (\Delta t)^2 + v^2 (\Delta t')^2")
         self.play(FadeOut(pythag_eq), Transform(sub_eq_1, step_1.move_to(ORIGIN)))
         self.wait(2)
@@ -159,11 +159,11 @@ class LorentzTransformationDerivation(Scene):
         self.play(Transform(sub_eq_1, step_3.move_to(ORIGIN)))
         self.wait(3)
 
-        # Final formula
+        
         final_eq = MathTex(r"\Delta t' = \frac{\Delta t}{\sqrt{1 - v^2/c^2}}")
         result_box = SurroundingRectangle(final_eq, color=BLUE, buff=0.2)
         
-        # Introduce Gamma
+        
         gamma = MathTex(r"\gamma = \frac{1}{\sqrt{1 - v^2/c^2}}").shift(DOWN * 2)
         gamma_result = MathTex(r"\Delta t' = \gamma \Delta t").move_to(final_eq.get_center())
         gamma_box = SurroundingRectangle(gamma_result, color=BLUE, buff=0.2)
@@ -189,15 +189,15 @@ class LorentzTransformationDerivation(Scene):
         title = Tex("Part 3: Deriving the Transformation for ", r"$x'$").to_edge(UP)
         self.play(Write(title))
 
-        # Setup with two frames
+        
         ax_S = Axes(x_range=[-1, 5], y_range=[-1, 3], tips=False).add_coordinates()
         label_S = MathTex("S").next_to(ax_S.y_axis, UP, buff=0.2)
         
         ax_Sp = Axes(x_range=[-1, 5], y_range=[-1, 3], tips=False, axis_config={"color": BLUE}).add_coordinates()
         label_Sp = MathTex("S'", color=BLUE).next_to(ax_Sp.y_axis, UP, buff=0.2)
-        ax_Sp.shift(RIGHT * 2.5) # Represent vt
+        ax_Sp.shift(RIGHT * 2.5) 
 
-        # Labels for distances
+        
         event = Dot(ax_S.c2p(4, 2), color=YELLOW)
         event_label = Tex("Event").next_to(event, DOWN)
         
@@ -222,16 +222,16 @@ class LorentzTransformationDerivation(Scene):
         )
         self.wait(3)
 
-        # Equations
+        
         visuals = VGroup(
             ax_S, label_S, ax_Sp, label_Sp, event, event_label,
             brace_x, label_x, brace_vt, label_vt, brace_xp, label_xp
         )
         self.play(visuals.animate.scale(0.5).to_corner(UL))
 
-        # Due to length contraction in S', its measurement of x is contracted.
-        # So x' appears shorter to S. The distance in S is x - vt.
-        # The proper length (in S') is x'. So, x - vt = x' / gamma.
+        
+        
+        
         eq1 = MathTex("x - vt", "=", r"\frac{x'}{\gamma}").to_edge(RIGHT, buff=1).shift(UP*1)
         self.play(Write(eq1))
         self.wait(2)
@@ -256,7 +256,7 @@ class LorentzTransformationDerivation(Scene):
         self.play(Write(eq_x), Write(eq_xp))
         self.wait(2)
 
-        # Substitute x' into the first equation
+        
         step1 = MathTex("x", "=", r"\gamma(\gamma(x-vt) + vt')")
         self.play(
             TransformMatchingTex(VGroup(eq_x, eq_xp).copy(), step1.move_to(ORIGIN))
@@ -279,7 +279,7 @@ class LorentzTransformationDerivation(Scene):
         self.play(Transform(step1, step5))
         self.wait(2)
 
-        # Sub-derivation for (1/gamma - gamma)
+        
         sub_derivation = MathTex(
             r"\frac{1}{\gamma} - \gamma = \sqrt{1-\frac{v^2}{c^2}} - \frac{1}{\sqrt{1-\frac{v^2}{c^2}}} = \frac{1 - v^2/c^2 - 1}{\sqrt{1-v^2/c^2}} = \frac{-v^2/c^2}{\sqrt{1-v^2/c^2}} = -\gamma \frac{v^2}{c^2}"
         ).scale(0.7).to_edge(DOWN)
@@ -290,7 +290,7 @@ class LorentzTransformationDerivation(Scene):
         self.play(Transform(step1, step6))
         self.wait(2)
 
-        # Final t' equation
+        
         final_eq = MathTex(r"t'", "=", r"\gamma \left(t - \frac{vx}{c^2}\right)")
         box_final = SurroundingRectangle(final_eq, color=BLUE, buff=0.2)
 
@@ -306,7 +306,7 @@ class LorentzTransformationDerivation(Scene):
         title = Tex("The Lorentz Transformation").to_edge(UP)
         self.play(Write(title))
 
-        # Individual equations
+        
         eq_t = MathTex(r"t'", "=", r"\gamma \left(t - \frac{vx}{c^2}\right)")
         eq_x = MathTex(r"x'", "=", r"\gamma (x-vt)")
         eq_y = MathTex(r"y'", "=", r"y")
@@ -316,7 +316,7 @@ class LorentzTransformationDerivation(Scene):
         self.play(Write(equations))
         self.wait(2)
 
-        # Matrix Form
+        
         matrix_lhs = MathTex(r"\begin{pmatrix} ct' \\ x' \\ y' \\ z' \end{pmatrix}")
         equals = MathTex("=").next_to(matrix_lhs, RIGHT)
         
@@ -339,6 +339,6 @@ class LorentzTransformationDerivation(Scene):
         self.play(Write(matrix_group), Write(beta_def))
         self.wait(4)
 
-        # Final Fade
+        
         final_group = VGroup(title, equations, matrix_group, beta_def)
         self.play(FadeOut(final_group))

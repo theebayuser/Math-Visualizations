@@ -3,36 +3,36 @@ import numpy as np
 
 class EulerLineAnimation(Scene):
     def construct(self):
-        # Set up the scene with a beautiful background
+        
         self.camera.background_color = "#0a0a0a"
         
-        # Title - moved down further
+        
         title = Text("The Euler Line", font_size=36, gradient=(BLUE, PURPLE))
         title.to_edge(UP, buff=1.2)
         
-        # Create an acute scalene triangle that fits in center third - made slightly smaller
+        
         A = np.array([-1.3, -0.4, 0])
         B = np.array([1.5, -0.6, 0])
         C = np.array([0.1, 1.0, 0])
         
         triangle = Polygon(A, B, C, color=WHITE, stroke_width=3)
         
-        # Label vertices
+        
         label_A = Text("A", font_size=20, color=WHITE).next_to(A, DOWN+LEFT, buff=0.15)
         label_B = Text("B", font_size=20, color=WHITE).next_to(B, DOWN+RIGHT, buff=0.15)
         label_C = Text("C", font_size=20, color=WHITE).next_to(C, UP, buff=0.15)
         
-        # Calculate special points
+        
         circumcenter = self.get_circumcenter(A, B, C)
         centroid = (A + B + C) / 3
         orthocenter = self.get_orthocenter(A, B, C)
         
-        # Create points
+        
         circumcenter_dot = Dot(circumcenter, color=BLUE, radius=0.06)
         centroid_dot = Dot(centroid, color=GREEN, radius=0.06)
         orthocenter_dot = Dot(orthocenter, color=RED, radius=0.06)
         
-        # Labels for special points - first with full names, then with letters
+        
         circumcenter_label_full = Text("Circumcenter", font_size=14, color=BLUE)
         centroid_label_full = Text("Centroid", font_size=14, color=GREEN)
         orthocenter_label_full = Text("Orthocenter", font_size=14, color=RED)
@@ -41,7 +41,7 @@ class EulerLineAnimation(Scene):
         centroid_label = Text("N", font_size=16, color=GREEN)
         orthocenter_label = Text("P", font_size=16, color=RED)
         
-        # Position labels to avoid overlap
+        
         circumcenter_label_full.next_to(circumcenter_dot, UP+LEFT, buff=0.2)
         centroid_label_full.next_to(centroid_dot, DOWN+LEFT, buff=0.2)
         orthocenter_label_full.next_to(orthocenter_dot, UP+RIGHT, buff=0.2)
@@ -50,17 +50,17 @@ class EulerLineAnimation(Scene):
         centroid_label.next_to(centroid_dot, DOWN+LEFT, buff=0.2)
         orthocenter_label.next_to(orthocenter_dot, UP+RIGHT, buff=0.2)
         
-        # Create circumcircle - limited radius to prevent excessive protrusion
+        
         circumradius = min(np.linalg.norm(A - circumcenter), 2.5)
         circumcircle = Circle(radius=circumradius, color=BLUE, stroke_width=2, stroke_opacity=0.5)
         circumcircle.move_to(circumcenter)
         
-        # Create perpendicular bisectors (limited extension)
+        
         perp_bisector_AB = self.get_perpendicular_bisector_extended(A, B, C)
         perp_bisector_BC = self.get_perpendicular_bisector_extended(B, C, A)
         perp_bisector_AC = self.get_perpendicular_bisector_extended(A, C, B)
         
-        # Create medians with midpoints
+        
         mid_BC = (B + C) / 2
         mid_AC = (A + C) / 2
         mid_AB = (A + B) / 2
@@ -69,17 +69,17 @@ class EulerLineAnimation(Scene):
         median_B = Line(B, mid_AC, color=GREEN, stroke_width=2, stroke_opacity=0.6)
         median_C = Line(C, mid_AB, color=GREEN, stroke_width=2, stroke_opacity=0.6)
         
-        # Create tick marks for medians to show they bisect the sides
+        
         median_marks_BC = self.get_median_tick_marks(B, mid_BC, C)
         median_marks_AC = self.get_median_tick_marks(A, mid_AC, C)
         median_marks_AB = self.get_median_tick_marks(A, mid_AB, B)
         
-        # Create altitudes
+        
         altitude_A = self.get_altitude(A, B, C)
         altitude_B = self.get_altitude(B, A, C)
         altitude_C = self.get_altitude(C, A, B)
         
-        # Create the Euler line - limited extension
+        
         euler_direction = orthocenter - circumcenter
         euler_length = np.linalg.norm(euler_direction)
         if euler_length > 0:
@@ -92,21 +92,21 @@ class EulerLineAnimation(Scene):
             stroke_width=4
         )
         
-        # Animation sequence - speeded up pauses
+        
         self.play(Write(title))
         self.wait(0.3)
         
-        # Draw triangle
+        
         self.play(Create(triangle))
         self.play(Write(label_A), Write(label_B), Write(label_C))
         self.wait(0.3)
         
-        # Show perpendicular bisectors (keep them visible throughout)
+        
         self.play(Create(perp_bisector_AB), Create(perp_bisector_BC), Create(perp_bisector_AC))
         self.wait(0.3)
         
-        # Show circumcenter
-        # Add right angle markers and equal length markers for perpendicular bisectors
+        
+        
         right_angle_AB = self.get_right_angle_marker_inside_triangle((A + B) / 2, A, B, C)
         right_angle_BC = self.get_right_angle_marker_inside_triangle((B + C) / 2, B, C, A)
         right_angle_AC = self.get_right_angle_marker_inside_triangle((A + C) / 2, A, C, B)
@@ -121,12 +121,12 @@ class EulerLineAnimation(Scene):
         self.play(Write(circumcenter_label_full))
         self.wait(0.3)
         
-        # Show circumcircle
+        
         self.play(Create(circumcircle))
         self.wait(0.3)
         
-        # Show centroid and medians
-        # Remove markers but keep perpendicular bisectors
+        
+        
         self.play(FadeOut(right_angle_AB), FadeOut(right_angle_BC), FadeOut(right_angle_AC),
                   FadeOut(equal_marks_AB), FadeOut(equal_marks_BC), FadeOut(equal_marks_AC))
         
@@ -136,13 +136,13 @@ class EulerLineAnimation(Scene):
         self.play(Write(centroid_label_full))
         self.wait(0.3)
         
-        # Remove median tick marks before showing altitudes
+        
         self.play(FadeOut(median_marks_BC), FadeOut(median_marks_AC), FadeOut(median_marks_AB))
         
-        # Show orthocenter and altitudes
+        
         self.play(Create(altitude_A), Create(altitude_B), Create(altitude_C))
         
-        # Add right angle markers for altitudes (inside triangle)
+        
         altitude_foot_A = self.get_foot_of_perpendicular(A, B, C)
         altitude_foot_B = self.get_foot_of_perpendicular(B, A, C)
         altitude_foot_C = self.get_foot_of_perpendicular(C, A, B)
@@ -156,11 +156,11 @@ class EulerLineAnimation(Scene):
         self.play(Write(orthocenter_label_full))
         self.wait(0.3)
         
-        # Reveal the Euler line
-        # Remove altitude right angle markers
+        
+        
         self.play(FadeOut(right_angle_alt_A), FadeOut(right_angle_alt_B), FadeOut(right_angle_alt_C))
         
-        # Replace full names with letter names
+        
         self.play(
             Transform(circumcenter_label_full, circumcenter_label),
             Transform(centroid_label_full, centroid_label),
@@ -170,7 +170,7 @@ class EulerLineAnimation(Scene):
         self.play(Create(euler_line))
         self.wait(0.3)
         
-        # Highlight the three points
+        
         self.play(
             Flash(circumcenter_dot, color=BLUE, flash_radius=0.2),
             Flash(centroid_dot, color=GREEN, flash_radius=0.2),
@@ -178,7 +178,7 @@ class EulerLineAnimation(Scene):
         )
         self.wait(0.3)
         
-        # Demonstrate universality by morphing the triangle (5 different positions) - more compact
+        
         triangle_configs = [
             (np.array([-1.0, -0.5, 0]), np.array([1.3, -0.3, 0]), np.array([-0.2, 1.2, 0])),
             (np.array([-1.4, -0.2, 0]), np.array([1.1, -0.7, 0]), np.array([0.6, 0.9, 0])),
@@ -188,12 +188,12 @@ class EulerLineAnimation(Scene):
         ]
         
         for new_A, new_B, new_C in triangle_configs:
-            # Calculate new special points
+            
             new_circumcenter = self.get_circumcenter(new_A, new_B, new_C)
             new_centroid = (new_A + new_B + new_C) / 3
             new_orthocenter = self.get_orthocenter(new_A, new_B, new_C)
             
-            # Create new elements
+            
             new_triangle = Polygon(new_A, new_B, new_C, color=WHITE, stroke_width=3)
             new_circumradius = min(np.linalg.norm(new_A - new_circumcenter), 2.5)
             new_circumcircle = Circle(radius=new_circumradius, color=BLUE, stroke_width=2, stroke_opacity=0.5)
@@ -227,7 +227,7 @@ class EulerLineAnimation(Scene):
                 stroke_width=4
             )
             
-            # Update labels
+            
             new_label_A = Text("A", font_size=20, color=WHITE).next_to(new_A, DOWN+LEFT, buff=0.15)
             new_label_B = Text("B", font_size=20, color=WHITE).next_to(new_B, DOWN+RIGHT, buff=0.15)
             new_label_C = Text("C", font_size=20, color=WHITE).next_to(new_C, UP, buff=0.15)
@@ -240,7 +240,7 @@ class EulerLineAnimation(Scene):
             new_centroid_label.next_to(new_centroid, DOWN+LEFT, buff=0.2)
             new_orthocenter_label.next_to(new_orthocenter, UP+RIGHT, buff=0.2)
             
-            # Animate transformation
+            
             self.play(
                 Transform(triangle, new_triangle),
                 Transform(circumcircle, new_circumcircle),
@@ -271,24 +271,24 @@ class EulerLineAnimation(Scene):
     
     def get_circumcenter(self, A, B, C):
         """Calculate circumcenter of triangle ABC"""
-        # Convert to 2D for calculation
+        
         A2D = A[:2]
         B2D = B[:2]
         C2D = C[:2]
         
-        # Perpendicular bisector method
+        
         mid_AB = (A2D + B2D) / 2
         mid_BC = (B2D + C2D) / 2
         
-        # Direction vectors
+        
         dir_AB = B2D - A2D
         dir_BC = C2D - B2D
         
-        # Perpendicular directions
+        
         perp_AB = np.array([-dir_AB[1], dir_AB[0]])
         perp_BC = np.array([-dir_BC[1], dir_BC[0]])
         
-        # Solve for intersection
+        
         matrix = np.column_stack([perp_AB, -perp_BC])
         rhs = mid_BC - mid_AB
         
@@ -302,20 +302,20 @@ class EulerLineAnimation(Scene):
     
     def get_orthocenter(self, A, B, C):
         """Calculate orthocenter of triangle ABC"""
-        # Convert to 2D
+        
         A2D = A[:2]
         B2D = B[:2]
         C2D = C[:2]
         
-        # Altitude from A to BC
+        
         BC = C2D - B2D
         BC_perp = np.array([-BC[1], BC[0]])
         
-        # Altitude from B to AC
+        
         AC = C2D - A2D
         AC_perp = np.array([-AC[1], AC[0]])
         
-        # Find intersection of altitudes
+        
         matrix = np.column_stack([BC_perp, -AC_perp])
         rhs = B2D - A2D
         
@@ -329,11 +329,11 @@ class EulerLineAnimation(Scene):
     
     def get_altitude(self, vertex, point1, point2):
         """Get altitude from vertex to line defined by point1 and point2"""
-        # Find foot of perpendicular
+        
         v1 = point1 - point2
         v2 = vertex - point2
         
-        # Project v2 onto v1
+        
         proj_length = np.dot(v2, v1) / np.dot(v1, v1)
         foot = point2 + proj_length * v1
         
@@ -343,40 +343,40 @@ class EulerLineAnimation(Scene):
         """Get perpendicular bisector that stops at the opposite side of the triangle"""
         midpoint = (point1 + point2) / 2
         
-        # Direction of the side
+        
         side_dir = point2 - point1
-        # Perpendicular direction
+        
         perp_dir = np.array([-side_dir[1], side_dir[0], 0])
         perp_dir = perp_dir / np.linalg.norm(perp_dir)
         
-        # Find intersection with the opposite side
-        # We need to find where the perpendicular bisector intersects the line containing the opposite vertex
-        # For a triangle ABC, if we're bisecting AB, we want to find intersection with side AC or BC
         
-        # Get the other two vertices (forming the opposite side)
+        
+        
+        
+        
         vertices = [point1, point2, opposite_vertex]
         other_vertices = [v for v in vertices if not np.allclose(v, point1) and not np.allclose(v, point2)]
         
         if len(other_vertices) == 1:
-            # This means opposite_vertex is the third vertex
-            # We need to find which of the other sides to intersect with
-            # Choose the side that actually gets intersected by the perpendicular bisector
             
-            # Try intersection with line from point1 to opposite_vertex
+            
+            
+            
+            
             intersection1 = self.line_intersection(midpoint, midpoint + perp_dir, point1, opposite_vertex)
-            # Try intersection with line from point2 to opposite_vertex  
+            
             intersection2 = self.line_intersection(midpoint, midpoint + perp_dir, point2, opposite_vertex)
             
-            # Choose the intersection that lies on the actual triangle side
+            
             if intersection1 is not None and self.point_on_segment(intersection1, point1, opposite_vertex):
                 end_point = intersection1
             elif intersection2 is not None and self.point_on_segment(intersection2, point2, opposite_vertex):
                 end_point = intersection2
             else:
-                # Fallback: extend by a reasonable amount
+                
                 end_point = midpoint + 1.5 * perp_dir
         else:
-            # Fallback: extend by a reasonable amount
+            
             end_point = midpoint + 1.5 * perp_dir
         
         return Line(midpoint, end_point, color=BLUE, stroke_width=2, stroke_opacity=0.6)
@@ -390,7 +390,7 @@ class EulerLineAnimation(Scene):
         
         denom = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4)
         if abs(denom) < 1e-10:
-            return None  # Lines are parallel
+            return None  
         
         t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / denom
         
@@ -401,34 +401,34 @@ class EulerLineAnimation(Scene):
     
     def point_on_segment(self, point, seg_start, seg_end):
         """Check if a point lies on a line segment"""
-        # Check if point is between seg_start and seg_end
+        
         vec1 = point - seg_start
         vec2 = seg_end - seg_start
         
         if np.linalg.norm(vec2) < 1e-10:
             return False
         
-        # Project vec1 onto vec2
+        
         t = np.dot(vec1, vec2) / np.dot(vec2, vec2)
         
-        # Point is on segment if 0 <= t <= 1
+        
         return 0 <= t <= 1
     
     def get_median_tick_marks(self, point1, midpoint, point2):
         """Create tick marks on both halves of a side to show equal length"""
-        # Vector from point1 to midpoint
+        
         v1 = midpoint - point1
         if np.linalg.norm(v1) > 0:
             v1 = v1 / np.linalg.norm(v1)
         
-        # Perpendicular vector for marks
+        
         perp = np.array([-v1[1], v1[0], 0]) * 0.08
         
-        # Create marks on first half
+        
         mark1_center = (point1 + midpoint) / 2
         mark1 = Line(mark1_center - perp, mark1_center + perp, color=GREEN, stroke_width=2)
         
-        # Create marks on second half
+        
         mark2_center = (midpoint + point2) / 2
         mark2 = Line(mark2_center - perp, mark2_center + perp, color=GREEN, stroke_width=2)
         
@@ -436,25 +436,25 @@ class EulerLineAnimation(Scene):
     
     def get_right_angle_marker_inside_triangle(self, point, line_point1, line_point2, opposite_vertex, size=0.12):
         """Create a right angle marker positioned inside the triangle"""
-        # Calculate triangle centroid to determine inside direction
+        
         centroid = (line_point1 + line_point2 + opposite_vertex) / 3
         
-        # Direction of the line
+        
         line_dir = line_point2 - line_point1
         if np.linalg.norm(line_dir) > 0:
             line_dir = line_dir / np.linalg.norm(line_dir) * size
         
-        # Perpendicular direction
+        
         perp_dir = np.array([-line_dir[1], line_dir[0], 0])
         
-        # Determine which direction points toward the inside of the triangle
+        
         to_centroid = centroid - point
         if np.dot(perp_dir, to_centroid) < 0:
             perp_dir = -perp_dir
         
         perp_dir = perp_dir / np.linalg.norm(perp_dir) * size
         
-        # Create the right angle square
+        
         corner1 = point + line_dir * 0.7
         corner2 = point + line_dir * 0.7 + perp_dir * 0.7
         corner3 = point + perp_dir * 0.7
@@ -467,19 +467,19 @@ class EulerLineAnimation(Scene):
     
     def get_equal_length_marks(self, point1, mid_point, mid_point2, point2):
         """Create equal length marks on line segments"""
-        # Vector from point1 to mid_point
+        
         v1 = mid_point - point1
         if np.linalg.norm(v1) > 0:
             v1 = v1 / np.linalg.norm(v1)
         
-        # Perpendicular vector for marks
+        
         perp = np.array([-v1[1], v1[0], 0]) * 0.08
         
-        # Create marks on first segment
+        
         mark1_center = (point1 + mid_point) / 2
         mark1 = Line(mark1_center - perp, mark1_center + perp, color=WHITE, stroke_width=2)
         
-        # Create marks on second segment
+        
         mark2_center = (mid_point2 + point2) / 2
         mark2 = Line(mark2_center - perp, mark2_center + perp, color=WHITE, stroke_width=2)
         
@@ -490,7 +490,7 @@ class EulerLineAnimation(Scene):
         v1 = point1 - point2
         v2 = vertex - point2
         
-        # Project v2 onto v1
+        
         proj_length = np.dot(v2, v1) / np.dot(v1, v1)
         foot = point2 + proj_length * v1
         
@@ -498,25 +498,25 @@ class EulerLineAnimation(Scene):
     
     def get_right_angle_marker_altitude_inside(self, point, vertex, line_point1, line_point2, size=0.10):
         """Create a right angle marker for altitudes positioned inside triangle"""
-        # Calculate triangle centroid to determine inside direction
+        
         centroid = (line_point1 + line_point2 + vertex) / 3
         
-        # Direction of the line
+        
         line_dir = line_point2 - line_point1
         if np.linalg.norm(line_dir) > 0:
             line_dir = line_dir / np.linalg.norm(line_dir) * size
         
-        # Direction from point to vertex
+        
         vertex_dir = vertex - point
         if np.linalg.norm(vertex_dir) > 0:
             vertex_dir = vertex_dir / np.linalg.norm(vertex_dir) * size
         
-        # Ensure both directions point toward the inside of the triangle
+        
         to_centroid = centroid - point
         if np.dot(vertex_dir, to_centroid) < 0:
             vertex_dir = -vertex_dir
         
-        # Create the right angle square
+        
         corner1 = point + line_dir * 0.8
         corner2 = point + line_dir * 0.8 + vertex_dir * 0.8
         corner3 = point + vertex_dir * 0.8
@@ -527,5 +527,4 @@ class EulerLineAnimation(Scene):
             Line(corner2, corner3, color=WHITE, stroke_width=1.5)
         )
 
-# To run this animation, save it as a .py file and run:
-# manim -pql filename.py EulerLineAnimation
+

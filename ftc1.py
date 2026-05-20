@@ -15,9 +15,9 @@ class FTC1Scene(Scene):
         C_T     = "#FF69B4"
         C_TH    = "#FFD700"
 
-        # ─────────────────────────────────────────────────────────────────────
-        # TITLE
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         title = Text(
             "𝔽undamental 𝕋heorem of 𝒞alculus",
             font_size=40, gradient=(BLUE, RED),
@@ -25,9 +25,9 @@ class FTC1Scene(Scene):
         title.move_to(UP * 3.35)
         title.set_width(min(title.width, 5.5))
 
-        # ─────────────────────────────────────────────────────────────────────
-        # AXES
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         axes = Axes(
             x_range=[0, 5.3, 1], y_range=[0, 4.0, 1],
             x_length=4.8, y_length=2.75,
@@ -38,7 +38,7 @@ class FTC1Scene(Scene):
             },
             tips=True,
         )
-        axes.move_to(ORIGIN + DOWN * 0.25)   # shifted down slightly for more vertical room
+        axes.move_to(ORIGIN + DOWN * 0.25)   
         t_axis_lbl = MathTex("t", font_size=26, color="#999999")
         t_axis_lbl.next_to(axes.x_axis.get_end(), RIGHT, buff=0.12)
         y_axis_lbl = MathTex("y", font_size=26, color="#999999")
@@ -59,9 +59,9 @@ class FTC1Scene(Scene):
         )
         self.play(Create(curve), Write(f_lbl), run_time=0.8)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # a, t markers + A(t) shade + definition
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         a_val = 0.45
         a_dot = Dot(axes.c2p(a_val, 0), color=WHITE, radius=0.065)
         a_lbl = MathTex("a", font_size=22, color=WHITE).next_to(
@@ -85,7 +85,7 @@ class FTC1Scene(Scene):
                                  f((a_val + t_val) / 2) * 0.28))
 
         def_eq = MathTex(r"A(t)=\int_a^t f(s)\,ds", font_size=27, color=WHITE)
-        def_eq.move_to(UP * 2.30)   # more space from axes
+        def_eq.move_to(UP * 2.30)   
 
         self.play(
             FadeIn(area_base), Write(At_lbl),
@@ -94,9 +94,9 @@ class FTC1Scene(Scene):
         )
         self.wait(0.4)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # t+h marker + full area + strip + A(t+h) label
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         h_init = 0.78
         th_val = t_val + h_init
         th_dot = Dot(axes.c2p(th_val, 0), color=C_TH, radius=0.08)
@@ -132,9 +132,9 @@ class FTC1Scene(Scene):
         )
         self.wait(0.5)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # RECTANGLE EMPHASIS: height f(t) + width h
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         rw  = axes.c2p(th_val, 0)[0] - axes.c2p(t_val, 0)[0]
         rph = axes.c2p(0, f(t_val))[1] - axes.c2p(0, 0)[1]
 
@@ -155,13 +155,13 @@ class FTC1Scene(Scene):
             axes.c2p(t_val - 0.18, f(t_val)),
             color=C_T, buff=0, stroke_width=2.2, tip_length=0.12,
         )
-        # Height label moved up: placed beside the midpoint of the arrow (with larger buff)
+        
         ht_lbl = MathTex(r"\underbrace{f(t)}_{\text{height}}", font_size=20, color=C_T)
         ht_lbl.next_to(height_arrow, LEFT, buff=0.10)
-        ht_lbl.shift(UP * 0.18)   # nudge upward
+        ht_lbl.shift(UP * 0.18)   
 
         width_arrow = DoubleArrow(
-            axes.c2p(t_val, -0.38),   # lowered for more vertical separation
+            axes.c2p(t_val, -0.38),   
             axes.c2p(th_val, -0.38),
             color=C_TH, buff=0, stroke_width=2.2, tip_length=0.12,
         )
@@ -176,7 +176,7 @@ class FTC1Scene(Scene):
             run_time=0.9,
         )
 
-        # Area ≈ height × width
+        
         bot1 = MathTex(
             r"\int_t^{t+h}\!f(s)\,ds",
             r"\;\approx\;",
@@ -187,13 +187,13 @@ class FTC1Scene(Scene):
         )
         bot1[2].set_color(C_T)
         bot1[4].set_color(C_TH)
-        bot1.move_to(DOWN * 3.40)   # more vertical space
+        bot1.move_to(DOWN * 3.40)   
         self.play(Write(bot1), run_time=0.7)
         self.wait(0.7)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # Substitute then divide
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         s1 = MathTex(
             r"A(t{+}h) - A(t)",
             r"\;=\;",
@@ -222,9 +222,9 @@ class FTC1Scene(Scene):
         self.play(ReplacementTransform(s1, s2), run_time=0.9)
         self.wait(0.5)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # h → 0 animation
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         h_tracker = ValueTracker(h_init)
 
         def get_strip():
@@ -293,9 +293,9 @@ class FTC1Scene(Scene):
         )
         self.wait(0.4)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # DERIVATION SEQUENCE
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
         def_eq2 = MathTex(r"A(t)=\int_a^t f(s)\,ds", font_size=27, color=WHITE)
         def_eq2.move_to(UP * 2.30)
 
@@ -318,13 +318,13 @@ class FTC1Scene(Scene):
         )
         self.wait(0.5)
 
-        # ─────────────────────────────────────────────────────────────────────
-        # FINAL REVEAL
-        # Step 1: limit eq → A'(t) = f(t)  (stays at bottom)
-        # Step 2: A'(t) = f(t) glows, rises, and morphs into the integral form
-        # ─────────────────────────────────────────────────────────────────────
+        
+        
+        
+        
+        
 
-        # s3 → A'(t) = f(t)
+        
         s4 = MathTex(r"A'(t)", r"\;=\;", r"f(t)", font_size=30, color=WHITE)
         s4[0].set_color(C_T)
         s4[2].set_color(C_T)
@@ -332,13 +332,13 @@ class FTC1Scene(Scene):
         self.play(ReplacementTransform(s3, s4), run_time=0.8)
         self.wait(0.5)
 
-        # Glow pulse on A'(t) = f(t) to signal it's about to transform
+        
         self.play(
             s4.animate.set_color(YELLOW).scale(1.15),
             run_time=0.4, rate_func=there_and_back,
         )
 
-        # Build the final equation at the top position
+        
         top_final = MathTex(
             r"\frac{d}{dt}\int_a^t\!f(s)\,ds \;=\; f(t)",
             font_size=38,
@@ -346,14 +346,14 @@ class FTC1Scene(Scene):
         top_final.set_color_by_gradient(BLUE, RED)
         top_final.move_to(UP * 2.20)
 
-        # s4 travels upward while simultaneously the final form writes in;
-        # def_eq2 fades out to make room
+        
+        
         self.play(
             FadeOut(def_eq2),
             s4.animate.move_to(UP * 2.20).set_opacity(0),
             run_time=0.6,
         )
-        # Write final equation exactly where s4 just arrived, so it feels continuous
+        
         self.play(
             Write(top_final),
             run_time=1.1,

@@ -3,7 +3,7 @@ import numpy as np
 
 class RiemannApproximations(Scene):
     
-    # --- Helper Functions ---
+    
     def calculate_riemann_value(self, func, x_min, x_max, n, sample_type):
         """Calculate the numerical value of a Riemann sum."""
         dx = (x_max - x_min) / n
@@ -48,7 +48,7 @@ class RiemannApproximations(Scene):
                 r"\sum_{i=0}^{" + str(n-1) + r"} f(x_i + \frac{\Delta x}{2}) \Delta x \approx " + f"{value:.2f}",
                 font_size=16
             )
-        else:  # trapezoid
+        else:  
             eq = MathTex(
                 r"\sum_{i=0}^{" + str(n-1) + r"} \frac{f(x_i) + f(x_{i+1})}{2} \Delta x \approx " + f"{value:.2f}",
                 font_size=14
@@ -65,7 +65,7 @@ class RiemannApproximations(Scene):
         sum_group = VGroup()
         
         if sample_type == "trapezoid":
-            # Manually create VGroup of trapezoids
+            
             x_coords = np.arange(x_min, x_max, dx)
             if x_coords[-1] < x_max - (dx * 0.01):
                  x_coords = np.append(x_coords, x_max - dx)
@@ -104,29 +104,29 @@ class RiemannApproximations(Scene):
         return sum_group
 
     def construct(self):
-        # --- Config ---
+        
         self.camera.background_color = BLACK
         
-        # Define colors for each type
+        
         LEFT_COLOR = BLUE_C
         RIGHT_COLOR = GREEN_C
         MID_COLOR = YELLOW_C
         TRAP_COLOR = MAROON_C
         CURVE_COLOR = WHITE
         
-        # Define the math
+        
         x_min, x_max = 0, 4
         
-        # New function with larger variation - exponential with sin
+        
         def func(x):
             return 2 + 3 * np.sin(2 * x) + 0.5 * x
 
-        # --- Title ---
+        
         title = Tex(r"$\mathbb{R}$iemann $\mathbb{A}$pproximations", font_size=44)
         title.set_color_by_gradient(BLUE, RED)
         title.to_edge(UP, buff=0.3)
 
-        # --- Create 2x2 Grid with smaller axes ---
+        
         ax_config = {
             "x_range": [0, 5, 1],
             "y_range": [0, 7, 2],
@@ -140,14 +140,14 @@ class RiemannApproximations(Scene):
         ax_m = Axes(**ax_config)
         ax_t = Axes(**ax_config)
 
-        # Arrange in tighter grid with bottom row moved down
+        
         grid = VGroup(
             VGroup(ax_l, ax_r).arrange(RIGHT, buff=0.5),
             VGroup(ax_m, ax_t).arrange(RIGHT, buff=0.5)
         ).arrange(DOWN, buff=2.0).scale(0.8)
         grid.move_to(ORIGIN).shift(UP*0.5)
 
-        # Create graphs
+        
         graph_l = ax_l.plot(func, x_range=[x_min, x_max], color=CURVE_COLOR)
         graph_r = ax_r.plot(func, x_range=[x_min, x_max], color=CURVE_COLOR)
         graph_m = ax_m.plot(func, x_range=[x_min, x_max], color=CURVE_COLOR)
@@ -156,48 +156,48 @@ class RiemannApproximations(Scene):
         all_axes = VGroup(ax_l, ax_r, ax_m, ax_t)
         all_graphs = VGroup(graph_l, graph_r, graph_m, graph_t)
 
-        # Add labels - align them all at the same height
+        
         label_l = Tex("Left Riemann", font_size=28)
         label_r = Tex("Right Riemann", font_size=28)
         label_m = Tex("Midpoint Riemann", font_size=28)
         label_t = Tex("Trapezoid Rule", font_size=28)
         
-        # Position labels at the same height
+        
         label_l.next_to(ax_l, UP, buff=0.2)
         label_r.next_to(ax_r, UP, buff=0.2)
         label_m.next_to(ax_m, UP, buff=0.2)
         label_t.next_to(ax_t, UP, buff=0.2)
         
-        # Align all labels to the same y-coordinate
+        
         target_y = label_r.get_y()
         label_l.set_y(target_y)
         label_m.set_y(label_t.get_y())
         
         all_labels = VGroup(label_l, label_r, label_m, label_t)
         
-        # Create initial equation labels
+        
         eq_l = MathTex(r"\sum f(x_i) \Delta x", font_size=16).next_to(ax_l, DOWN, buff=0.2)
         eq_r = MathTex(r"\sum f(x_i) \Delta x", font_size=16).next_to(ax_r, DOWN, buff=0.2)
         eq_m = MathTex(r"\sum f(x_i) \Delta x", font_size=16).next_to(ax_m, DOWN, buff=0.2)
         eq_t = MathTex(r"\sum f(x_i) \Delta x", font_size=16).next_to(ax_t, DOWN, buff=0.2)
         all_equations = VGroup(eq_l, eq_r, eq_m, eq_t)
         
-        # Calculate the actual integral value
+        
         from scipy import integrate
         actual_value, _ = integrate.quad(func, x_min, x_max)
         
-        # Create integral expression below the bottom row of graphs
+        
         integral_eq = MathTex(
             r"\int_{0}^{4} \left(2 + 3\sin(2x) + 0.5x\right) dx = " + f"{actual_value:.4f}",
             font_size=24
         )
-        # Position it below the center of the bottom two graphs
+        
         bottom_center = VGroup(ax_m, ax_t).get_center()
         integral_eq.next_to(VGroup(ax_m, ax_t), DOWN, buff=0.85)
         integral_eq.set_x(bottom_center[0])
         
-        # --- Animation Sequence ---
-        # Add everything at the start
+        
+        
         self.add(
             title,
             *all_axes,
@@ -207,7 +207,7 @@ class RiemannApproximations(Scene):
             integral_eq
         )
         
-        # --- n = 4 ---
+        
         n_4 = 4
         sums_n4 = VGroup(
             self.get_riemann_sum(ax_l, graph_l, x_min, x_max, n_4, 'left', LEFT_COLOR),
@@ -218,7 +218,7 @@ class RiemannApproximations(Scene):
         
         self.play(*[Create(s) for s in sums_n4], run_time=1.5)
         
-        # Update equations for n=4
+        
         val_l = self.calculate_riemann_value(func, x_min, x_max, n_4, 'left')
         val_r = self.calculate_riemann_value(func, x_min, x_max, n_4, 'right')
         val_m = self.calculate_riemann_value(func, x_min, x_max, n_4, 'center')
@@ -238,7 +238,7 @@ class RiemannApproximations(Scene):
         )
         self.wait(1.0)
         
-        # --- n = 8 ---
+        
         n_8 = 8
         sums_n8 = VGroup(
             self.get_riemann_sum(ax_l, graph_l, x_min, x_max, n_8, 'left', LEFT_COLOR),
@@ -268,7 +268,7 @@ class RiemannApproximations(Scene):
         )
         self.wait(0.1)
         
-        # --- n = 16 ---
+        
         n_16 = 16
         sums_n16 = VGroup(
             self.get_riemann_sum(ax_l, graph_l, x_min, x_max, n_16, 'left', LEFT_COLOR),
@@ -298,7 +298,7 @@ class RiemannApproximations(Scene):
         )
         self.wait(0.1)
 
-        # --- n = 32 ---
+        
         n_32 = 32
         sums_n32 = VGroup(
             self.get_riemann_sum(ax_l, graph_l, x_min, x_max, n_32, 'left', LEFT_COLOR),
@@ -328,7 +328,7 @@ class RiemannApproximations(Scene):
         )
         self.wait(0.1)
         
-        # --- n = 64 ---
+        
         n_64 = 64
         sums_n64 = VGroup(
             self.get_riemann_sum(ax_l, graph_l, x_min, x_max, n_64, 'left', LEFT_COLOR),
@@ -358,7 +358,7 @@ class RiemannApproximations(Scene):
         )
         self.wait(0.1)
         
-        # --- n = 128 ---
+        
         n_128 = 128
         sums_n128 = VGroup(
             self.get_riemann_sum(ax_l, graph_l, x_min, x_max, n_128, 'left', LEFT_COLOR),
@@ -388,7 +388,7 @@ class RiemannApproximations(Scene):
         )
         self.wait(0.1)
 
-        # --- n = Infinity (Smooth Area) ---
+        
         areas = VGroup(
             ax_l.get_area(graph_l, x_range=[x_min, x_max], color=LEFT_COLOR, opacity=0.7),
             ax_r.get_area(graph_r, x_range=[x_min, x_max], color=RIGHT_COLOR, opacity=0.7),

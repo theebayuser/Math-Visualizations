@@ -45,13 +45,13 @@ class ArchimedesPi(MovingCameraScene):
         C_GREY   = GREY_B
         C_SUB    = GREEN_C
 
-        cam = self.camera.frame  # noqa – kept for MovingCameraScene compat
+        cam = self.camera.frame  
 
-        # ══════════════════════════════════════════════════════════════
-        # TITLE  — mathbb first letters, gradient blue→red, size 28
-        # ══════════════════════════════════════════════════════════════
-        # ── Title: mathbb first letters, gradient red→blue, size 28 ──
-        # Build as separate mobs then arrange so nothing overlaps
+        
+        
+        
+        
+        
         title_parts = [
             (r"\mathbb{A}\text{rchimedes' }", interpolate_color(RED_C, BLUE_C, 0.0)),
             (r"\pi",                           interpolate_color(RED_C, BLUE_C, 0.4)),
@@ -62,14 +62,14 @@ class ArchimedesPi(MovingCameraScene):
         title_group.to_edge(UP, buff=0.14)
         self.add(title_group)
 
-        # ── measure title width so bar + table match it exactly ───────
-        TW        = title_group.width          # ~title width in scene units
-        TITLE_L   = title_group.get_left()[0]  # left x of title
-        TITLE_R   = title_group.get_right()[0] # right x of title
-        TITLE_CX  = (TITLE_L + TITLE_R) / 2   # centre x of title
+        
+        TW        = title_group.width          
+        TITLE_L   = title_group.get_left()[0]  
+        TITLE_R   = title_group.get_right()[0] 
+        TITLE_CX  = (TITLE_L + TITLE_R) / 2   
         TITLE_BOT = title_group.get_bottom()[1]
 
-        # ── Gradient progress bar — same width & centred as title ─────
+        
         bar_w  = TW
         bar_h  = 0.13
         bar_y  = -3.88
@@ -97,21 +97,21 @@ class ArchimedesPi(MovingCameraScene):
             anims.append(prog_dot.animate.move_to([target_x, bar_y, 0]))
             return AnimationGroup(*anims, run_time=run_time)
 
-        # ══════════════════════════════════════════════════════════════
-        # LAYOUT  — polygon moved down 0.35 more than before
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
         R      = 1.52
-        FIG_CY = TITLE_BOT - R - 0.55   # pushed down
+        FIG_CY = TITLE_BOT - R - 0.55   
         cO     = np.array([0.0, FIG_CY, 0])
 
-        EQ_TOP = FIG_CY - R - 0.55      # equations further below circle
+        EQ_TOP = FIG_CY - R - 0.55      
         EQ_X   = 0.0
-        EQ_GAP = 1.02                   # very generous spacing
+        EQ_GAP = 1.02                   
 
         def eq_pos(row):
             return np.array([EQ_X, EQ_TOP - row * EQ_GAP, 0])
 
-        # ── Geometry points ───────────────────────────────────────────
+        
         angle_C = PI / 2
         angle_E = PI / 2 - PI / 4
         angle_D = (angle_C + angle_E) / 2
@@ -132,7 +132,7 @@ class ArchimedesPi(MovingCameraScene):
         lbl_C  = MathTex("C", font_size=20, color=C_POLY).next_to(dot_C, UL, buff=0.06)
         lbl_E  = MathTex("E", font_size=20, color=C_POLY).next_to(dot_E, RIGHT, buff=0.07)
 
-        # d_n: perpendicular outward from CE midpoint
+        
         CE_mid  = (C + E) / 2
         CE_perp = np.array([-(E - C)[1], (E - C)[0], 0])
         CE_perp /= np.linalg.norm(CE_perp)
@@ -149,7 +149,7 @@ class ArchimedesPi(MovingCameraScene):
         lbl_D   = MathTex("D", font_size=20, color=C_BISECT).next_to(dot_D, UR, buff=0.06)
         lbl_B   = MathTex("B", font_size=20, color=C_GREY).next_to(dot_B, DR, buff=0.06)
 
-        # d_2n: perpendicular outward from CD midpoint (away from B)
+        
         CD_mid  = (C + D) / 2
         CD_perp = np.array([-(D - C)[1], (D - C)[0], 0])
         CD_perp /= np.linalg.norm(CD_perp)
@@ -167,7 +167,7 @@ class ArchimedesPi(MovingCameraScene):
             verts = [centre + radius * np.array([np.cos(a), np.sin(a), 0]) for a in angs]
             return Polygon(*verts, **kw)
 
-        # ── Equation tracker ─────────────────────────────────────────
+        
         live_eqs   = []
         slot_count = [0]
 
@@ -185,9 +185,9 @@ class ArchimedesPi(MovingCameraScene):
                 anims.append(m.animate.move_to(eq_pos(idx + j)))
             return anims
 
-        # ══════════════════════════════════════════════════════════════
-        # SETUP — draw N-gon and 2N-gon to establish d_n / d_2n
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
         self.play(set_progress(0.0, run_time=0.01))
 
         oct8  = inscribed_poly(8,  R, cO, color=C_POLY,   stroke_width=1.8,
@@ -201,7 +201,7 @@ class ArchimedesPi(MovingCameraScene):
         defs.move_to(eq_pos(0.55))
 
         self.play(Create(circ), FadeIn(dot_A, lbl_A), run_time=0.40)
-        # Draw octagon edges one by one while simultaneously writing d_n definition
+        
         oct8_verts  = [cO + R * np.array([np.cos(PI/2 + 2*PI*k/8),
                                             np.sin(PI/2 + 2*PI*k/8), 0]) for k in range(8)]
         oct16_verts = [cO + R * np.array([np.cos(PI/2 + 2*PI*k/16),
@@ -211,7 +211,7 @@ class ArchimedesPi(MovingCameraScene):
         oct16_edges = [Line(oct16_verts[k], oct16_verts[(k+1) % 16],
                             color=C_BISECT, stroke_width=1.8) for k in range(16)]
 
-        # Draw both polygons edge-by-edge at the same time, label text appears alongside
+        
         self.play(Write(dn_def), Write(d2n_def),
                   *[Create(e) for e in oct8_edges],
                   *[Create(e) for e in oct16_edges],
@@ -220,7 +220,7 @@ class ArchimedesPi(MovingCameraScene):
         self.add(oct8, oct16)
         self.wait(0.30)
 
-        # Now draw the single-segment geometry BEFORE fading polygons
+        
         self.play(
             Create(seg_AC), Create(seg_AE), Create(seg_CE),
             FadeIn(dot_C, dot_E, lbl_C, lbl_E), run_time=0.40
@@ -229,7 +229,7 @@ class ArchimedesPi(MovingCameraScene):
         self.play(Create(seg_AD), FadeIn(dot_D, lbl_D), run_time=0.30)
         self.play(Create(seg_CD), FadeIn(d2n_lbl), run_time=0.30)
 
-        # Fade full polygons now that labels are in place
+        
         self.play(FadeOut(oct8, oct16, defs), run_time=0.30)
 
         self.play(Create(seg_AB), Create(seg_BD), FadeIn(dot_B, lbl_B), run_time=0.30)
@@ -238,15 +238,15 @@ class ArchimedesPi(MovingCameraScene):
 
         self.play(set_progress(0.08))
 
-        # ══════════════════════════════════════════════════════════════
-        # EQ 1 — BC = d_n / 2
-        # Highlight: CE (= BC, the polygon side) and dn_lbl
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
+        
         hl1_CE = hl(seg_CE, col=C_ACC, width=6)
         eq1 = MathTex(r"BC = \frac{d_n}{2}", font_size=31, color=C_EQ)
         place_eq(eq1)
 
-        # Flash CE and dn_lbl together — BC is half the side d_n
+        
         self.play(FadeIn(hl1_CE),
                   dn_lbl.animate.set_color(C_ACC).scale(1.15),
                   run_time=0.25)
@@ -258,14 +258,14 @@ class ArchimedesPi(MovingCameraScene):
                   run_time=0.20)
         self.play(set_progress(0.18))
 
-        # ══════════════════════════════════════════════════════════════
-        # EQ 2 — AB² + BC² = 1  (Pythagorean Theorem on △ABC)
-        # Highlight: AC (hypotenuse=1), AB (solid helper), BC=CE (side)
-        # ══════════════════════════════════════════════════════════════
-        # △ABC: AC = radius = 1 (hypotenuse, green), AB = projection (green_c), BC = half-side (yellow)
-        hl2_AC = hl(seg_AC, col=GREEN_B, width=5)   # hypotenuse = radius = 1
-        hl2_AB = hl(seg_AB, col=C_SUB,   width=5)   # AB = foot-to-centre projection
-        hl2_BC = hl(seg_CE, col=C_POLY,  width=5)   # BC = half of d_n side
+        
+        
+        
+        
+        
+        hl2_AC = hl(seg_AC, col=GREEN_B, width=5)   
+        hl2_AB = hl(seg_AB, col=C_SUB,   width=5)   
+        hl2_BC = hl(seg_CE, col=C_POLY,  width=5)   
         ra_hl  = ra_B.copy().set_stroke(color=C_ACC, width=2.5)
 
         eq2 = MathTex(r"AB^2 + BC^2 = 1", font_size=31, color=C_EQ)
@@ -282,10 +282,10 @@ class ArchimedesPi(MovingCameraScene):
         self.play(FadeOut(bg2, lbl2, hl2_AB, hl2_BC, hl2_AC, ra_hl), run_time=0.28)
         self.play(set_progress(0.28))
 
-        # ══════════════════════════════════════════════════════════════
-        # EQ 3 — rearrange eq2 → substitute BC → AB = √(1−d_n²/4)
-        # Highlight AB while rearranging so viewer tracks what's being isolated
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
+        
         hl3_AB = hl(seg_AB, col=C_SUB, width=5)
         self.play(FadeIn(hl3_AB), run_time=0.15)
         eq2_mid = MathTex(r"AB = \sqrt{1 - BC^2}", font_size=31, color=C_EQ)
@@ -315,14 +315,14 @@ class ArchimedesPi(MovingCameraScene):
         self.wait(0.25)
         self.play(set_progress(0.38))
 
-        # ══════════════════════════════════════════════════════════════
-        # EQ 4 — BD = 1 − √(1 − d_n²/4)  (direct substitution)
-        # Highlight: BD (what we're solving for) and AB (what we subtract from 1)
-        # ══════════════════════════════════════════════════════════════
-        # BD = 1 − AB: show the full radius AD (=1), then AB and the remainder BD
-        hl4_AD = hl(seg_AD, col=GREEN_B,  width=4)  # full radius AD = 1
-        hl4_AB = hl(seg_AB, col=C_SUB,    width=5)  # AB we just derived
-        hl4_BD = hl(seg_BD, col=C_BISECT, width=5)  # BD = remainder
+        
+        
+        
+        
+        
+        hl4_AD = hl(seg_AD, col=GREEN_B,  width=4)  
+        hl4_AB = hl(seg_AB, col=C_SUB,    width=5)  
+        hl4_BD = hl(seg_BD, col=C_BISECT, width=5)  
 
         eq4 = MathTex(r"BD = 1 - \sqrt{1 - \frac{d_n^2}{4}}", font_size=29, color=C_EQ)
         place_eq(eq4)
@@ -344,15 +344,15 @@ class ArchimedesPi(MovingCameraScene):
         self.wait(0.25)
         self.play(set_progress(0.48))
 
-        # ══════════════════════════════════════════════════════════════
-        # EQ 5 — d_2n² = BC² + BD²  (Pythagorean Theorem on △CBD)
-        # Highlight: CD (hypotenuse = d_2n), BC (leg), BD (leg), right angle at B
-        # ══════════════════════════════════════════════════════════════
-        # △CBD: CD = d_2n (hypotenuse, pink), BC = leg (yellow), BD = leg (orange), right angle at B
-        hl5_CD = hl(seg_CD, col=C_ACC,    width=6)   # d_2n = hypotenuse
-        hl5_BC = hl(seg_CE, col=C_POLY,   width=5)   # BC leg (half of CE)
-        hl5_BD = hl(seg_BD, col=C_BISECT, width=5)   # BD leg
-        ra_C   = ra_mark(B, C, D, size=0.12, col=C_ACC)  # right angle at B in △CBD
+        
+        
+        
+        
+        
+        hl5_CD = hl(seg_CD, col=C_ACC,    width=6)   
+        hl5_BC = hl(seg_CE, col=C_POLY,   width=5)   
+        hl5_BD = hl(seg_BD, col=C_BISECT, width=5)   
+        ra_C   = ra_mark(B, C, D, size=0.12, col=C_ACC)  
 
         eq5 = MathTex(r"d_{2n}^2 = BC^2 + BD^2", font_size=31, color=C_EQ)
         place_eq(eq5)
@@ -377,10 +377,10 @@ class ArchimedesPi(MovingCameraScene):
         self.wait(0.25)
         self.play(set_progress(0.58))
 
-        # ══════════════════════════════════════════════════════════════
-        # EQ 6 — expand → transform in-place to final recurrence
-        # Highlight d_2n (CD) while writing expansion, keep visible through transform
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
+        
         hl6_CD  = hl(seg_CD, col=C_ACC,    width=6)
         hl6_BC  = hl(seg_CE, col=C_POLY,   width=4)
         hl6_BD  = hl(seg_BD, col=C_BISECT, width=4)
@@ -399,7 +399,7 @@ class ArchimedesPi(MovingCameraScene):
             r"d_{2n} = \sqrt{2 - 2\sqrt{1 - \frac{d_n^2}{4}}}",
             font_size=31, color=YELLOW
         )
-        # Centre eq_final at same x as all equations
+        
         eq_final.move_to(eq6.get_center())
         eq_final.set_color_by_tex("d_{2n}", C_BISECT)
         eq_final.set_color_by_tex("d_n",    C_POLY)
@@ -411,7 +411,7 @@ class ArchimedesPi(MovingCameraScene):
         ret5 = retire_eq(eq5)
         self.play(*ret5, run_time=0.30)
 
-        # Slide eq_final down for visual prominence before boxing
+        
         self.play(eq_final.animate.shift(DOWN * 0.55), run_time=0.35)
 
         box_final = SurroundingRectangle(
@@ -423,13 +423,13 @@ class ArchimedesPi(MovingCameraScene):
         self.wait(0.55)
         self.play(set_progress(0.65))
 
-        # ══════════════════════════════════════════════════════════════
-        # MOVE final formula into circle; fade derivation geometry
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
         eq_in_circle = MathTex(
             r"d_{2n} = \sqrt{2 - 2\sqrt{1 - \dfrac{d_n^2}{4}}}",
             font_size=15, color=YELLOW
-        ).move_to(cO)   # centred exactly at circle centre
+        ).move_to(cO)   
 
         proof_geo = VGroup(
             dot_A, lbl_A, dot_C, dot_E, dot_D, dot_B,
@@ -445,7 +445,7 @@ class ArchimedesPi(MovingCameraScene):
         )
         self.wait(0.65)
 
-        # Compact recurrence reminder top-right
+        
         rec_compact = MathTex(
             r"d_{2n} = \sqrt{2 - 2\sqrt{1-\frac{d_n^2}{4}}}",
             font_size=17, color=YELLOW
@@ -454,16 +454,16 @@ class ArchimedesPi(MovingCameraScene):
         self.wait(0.28)
         self.play(set_progress(0.72))
 
-        # ══════════════════════════════════════════════════════════════
-        # ITERATION
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
         R_it = R
-        cIt  = cO   # same circle already on screen
+        cIt  = cO   
 
-        # Table — columns compressed to title width
+        
         TBL_TOP  = EQ_TOP + 0.14
-        # Map four columns across title width
-        COL_FRAC = [0.08, 0.30, 0.62, 0.88]   # fractional positions within title
+        
+        COL_FRAC = [0.08, 0.30, 0.62, 0.88]   
         COL_X    = [TITLE_L + f * TW for f in COL_FRAC]
 
         hdr_texts = [
@@ -474,7 +474,7 @@ class ArchimedesPi(MovingCameraScene):
         ]
         hdr_cols  = [WHITE, C_POLY, C_ACC, C_GREY]
         
-        # CHANGED: Use MathTex instead of Text, and remove weight=BOLD
+        
         hdr_mobs  = VGroup(*[
             MathTex(t, font_size=14, color=c)
             for t, c in zip(hdr_texts, hdr_cols)
@@ -519,13 +519,13 @@ class ArchimedesPi(MovingCameraScene):
             spd  = iter_run(idx)
             sw   = max(0.20, 1.5 - idx * 0.17)
 
-            # Build polygon edges one by one for first 3, then Transform
+            
             angs  = [PI / 2 + 2 * PI * k / n_s for k in range(n_s)]
             verts = [cIt + R_it * np.array([np.cos(a), np.sin(a), 0]) for a in angs]
             poly  = Polygon(*verts, color=col, stroke_width=sw, fill_opacity=0.0)
 
             if idx == 0:
-                # draw edges individually for first polygon
+                
                 edges = [Line(verts[k], verts[(k+1) % n_s], color=col, stroke_width=sw)
                          for k in range(n_s)]
                 for e in edges:
@@ -536,7 +536,7 @@ class ArchimedesPi(MovingCameraScene):
             else:
                 self.play(Transform(prev_poly, poly), run_time=spd)
 
-            # Table row
+            
             row_y    = ROW_Y_START - idx * ROW_GAP
             row_vals = [f"{n_s}", f"{d_s:.5f}", f"{pi_s:.6f}", f"{err_s:.6f}"]
             row_col_ = [col, C_POLY, C_ACC, C_GREY]
@@ -557,9 +557,9 @@ class ArchimedesPi(MovingCameraScene):
         self.play(set_progress(1.0))
         self.wait(0.90)
 
-        # ══════════════════════════════════════════════════════════════
-        # FINAL REVEAL — keep circ, last polygon, eq_in_circle, title
-        # ══════════════════════════════════════════════════════════════
+        
+        
+        
         fade_group = VGroup(
             rec_compact, hdr_mobs, hdr_line,
             bar_segs, prog_dot,

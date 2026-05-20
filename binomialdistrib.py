@@ -13,7 +13,7 @@ from math import comb
 random.seed(42)
 np.random.seed(42)
 
-# ── Palette ───────────────────────────────────────────────────────────────────
+
 C_BG       = "#000000"
 C_PEG      = "#4a9eff"
 C_CURVE    = "#ff6b6b"
@@ -25,7 +25,7 @@ def lerp_hex(a, b, t):
         *(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
     )
 
-# ── Layout ────────────────────────────────────────────────────────────────────
+
 USABLE_W   = 14.222 / 3
 LEFT_EDGE  = -USABLE_W / 2
 RIGHT_EDGE =  USABLE_W / 2
@@ -34,20 +34,20 @@ PEG_ROWS    = 10
 PEG_SPACING = 0.245
 PEG_RADIUS  = 0.028
 
-# Shifted start position down slightly
-BOARD_TOP   = 3.10
-BOARD_BOT   = BOARD_TOP - (PEG_ROWS - 1) * PEG_SPACING   # 0.895
 
-NUM_BINS    = PEG_ROWS + 1    # 11
+BOARD_TOP   = 3.10
+BOARD_BOT   = BOARD_TOP - (PEG_ROWS - 1) * PEG_SPACING   
+
+NUM_BINS    = PEG_ROWS + 1    
 BIN_W       = USABLE_W / NUM_BINS
 BIN_BOTTOM  = -2.50
-BIN_CEIL    = BOARD_BOT - 0.28    # 0.615
+BIN_CEIL    = BOARD_BOT - 0.28    
 
-# Significantly larger balls
+
 BALL_RADIUS = 0.016
 BALL_GAP    = 0.002
 NUM_BALLS   = 350
-COUNT_FS    = 16 # Increased font size for the live counter
+COUNT_FS    = 16 
 
 TITLE_Y = 3.75
 
@@ -67,7 +67,7 @@ def ball_land_y(stack):
 def make_path_pts(bin_idx, stack):
     turns = [1]*bin_idx + [-1]*(PEG_ROWS - bin_idx)
     random.shuffle(turns)
-    # Start directly above the first peg
+    
     pts = [np.array([0.0, BOARD_TOP + 0.35, 0.0])]
     x = 0.0
     for row, t in enumerate(turns):
@@ -89,7 +89,7 @@ def make_marble(pos, color_hex):
     hl_pos = pos + np.array([-BALL_RADIUS*0.28, BALL_RADIUS*0.30, 0.0])
     hl = Dot(point=hl_pos, radius=BALL_RADIUS * 0.30, color=WHITE)
     
-    # Start fully transparent using foolproof fill/stroke methods
+    
     base.set_fill(opacity=0).set_stroke(opacity=0)
     hl.set_fill(opacity=0).set_stroke(opacity=0)
     return VGroup(base, hl)
@@ -100,13 +100,13 @@ class GaltonBoard(Scene):
     def construct(self):
         self.camera.background_color = C_BG
 
-        # ── Title (Image 1 Style with Mathbb & Spacing) ───────────────────
+        
         bb_b  = MathTex(r"\mathbb{B}", font_size=56)
         t1    = Tex("inomial",         font_size=52)
         bb_d  = MathTex(r"\mathbb{D}", font_size=56)
         t2    = Tex("istribution",     font_size=52)
         
-        # Group words separately to enforce the space
+        
         word1 = VGroup(bb_b, t1).arrange(RIGHT, buff=0.02, aligned_edge=DOWN)
         word2 = VGroup(bb_d, t2).arrange(RIGHT, buff=0.02, aligned_edge=DOWN)
         
@@ -115,7 +115,7 @@ class GaltonBoard(Scene):
         title.move_to(np.array([0.0, TITLE_Y, 0.0]))
         self.play(FadeIn(title, shift=DOWN*0.08), run_time=0.45)
 
-        # ── Peg board ─────────────────────────────────────────────────────
+        
         pegs = VGroup(*[
             Dot(point=peg_pos(r, c), radius=PEG_RADIUS, color=C_PEG)
             for r in range(PEG_ROWS) for c in range(r + 1)
@@ -123,7 +123,7 @@ class GaltonBoard(Scene):
         pegs.set_opacity(0.78)
         self.play(FadeIn(pegs, lag_ratio=0.008, run_time=0.35))
 
-        # ── Bin walls ─────────────────────────────────────────────────────
+        
         walls = VGroup(*[
             Line(
                 start=np.array([LEFT_EDGE + i*BIN_W, BIN_BOTTOM,     0.0]),
@@ -134,7 +134,7 @@ class GaltonBoard(Scene):
         ])
         self.play(FadeIn(walls, run_time=0.20))
 
-        # ── Live Counters (Using Integer Mobjects for smooth updating) ────
+        
         bin_counts = [0] * NUM_BINS
         count_labels = VGroup(*[
             Integer(0, font_size=COUNT_FS, color=WHITE)
@@ -143,34 +143,34 @@ class GaltonBoard(Scene):
         ])
         self.add(count_labels)
 
-        # ── Pre-calculate continuous stream logic ─────────────────────────
+        
         bin_indices = np.random.binomial(PEG_ROWS, 0.5, NUM_BALLS).tolist()
         
         drop_times = []
         current_time = 0.0
         for j in range(NUM_BALLS):
             drop_times.append(current_time)
-            # The gap between balls starts large (slow) and drops off cubically (fast pour)
+            
             prog = j / NUM_BALLS
             dt_step = 0.20 * (1 - prog)**3 + 0.008
             current_time += dt_step
             
-        # Global time tracker
+        
         time_tracker = ValueTracker(0.0)
         self.add(time_tracker)
         
         all_marbles = VGroup()
         landed_status = [False] * NUM_BALLS
-        FALL_DURATION = 3.6  # Slow, natural fall speed
+        FALL_DURATION = 3.6  
 
-        # ── Updater generator for marbles ─────────────────────────────────
+        
         def get_update_func(marble_mob, start_t, path_vmob):
             def update_marble(m, dt):
                 ct = time_tracker.get_value()
                 if ct < start_t:
                     return
                 
-                # Make visible once it's scheduled to drop using a custom flag
+                
                 if not hasattr(m, "is_revealed"):
                     m[0].set_fill(opacity=0.95).set_stroke(opacity=0.95)
                     m[1].set_fill(opacity=0.42).set_stroke(opacity=0.42)
@@ -182,7 +182,7 @@ class GaltonBoard(Scene):
                 m.move_to(path_vmob.point_from_proportion(alpha))
             return update_marble
 
-        # Build paths and marbles
+        
         temp_bin_counts = [0] * NUM_BINS
         for j in range(NUM_BALLS):
             bidx = int(bin_indices[j])
@@ -193,12 +193,12 @@ class GaltonBoard(Scene):
             color   = lerp_hex(BALL_HEX_A, BALL_HEX_B, t_color)
             marble  = make_marble(pts[0].copy(), color)
             
-            # Attach the unique updater
+            
             marble.add_updater(get_update_func(marble, drop_times[j], make_vmob(pts)))
             all_marbles.add(marble)
             self.add(marble)
 
-        # Updater to precisely increment the Integer Mobjects
+        
         def update_labels(m, dt):
             ct = time_tracker.get_value()
             changed = False
@@ -215,18 +215,18 @@ class GaltonBoard(Scene):
 
         count_labels.add_updater(update_labels)
 
-        # ── Play the simulation stream ────────────────────────────────────
+        
         total_anim_time = drop_times[-1] + FALL_DURATION + 0.5
         self.play(time_tracker.animate.set_value(total_anim_time), run_time=total_anim_time, rate_func=linear)
         
-        # Detach updaters so they don't lock position during the upward shift
+        
         for m in all_marbles:
             m.clear_updaters()
         count_labels.clear_updaters()
 
         self.wait(0.50)
 
-        # ── Bell-curve overlay ────────────────────────────────────────────
+        
         max_prob  = max(comb(PEG_ROWS, k) / 2**PEG_ROWS for k in range(NUM_BINS))
         max_bar_h = BIN_CEIL - BIN_BOTTOM
         curve_pts = [np.array([LEFT_EDGE, BIN_BOTTOM, 0.0])]
@@ -244,16 +244,16 @@ class GaltonBoard(Scene):
 
         self.wait(0.30)
 
-        # ── Fade out pegs & shift graph upwards ───────────────────────────
+        
         self.play(FadeOut(pegs), run_time=0.60)
         
         graph_group  = VGroup(walls, count_labels, all_marbles, bell)
         
-        # Move everything up to make generous room at the bottom
+        
         self.play(graph_group.animate.shift(UP * 2.3), run_time=1.2)
         self.wait(0.2)
 
-        # ── Draw Formula (Image 2 Style) ──────────────────────────────────
+        
         formula = MathTex(
             r"P(X{=}k)=\binom{n}{k}p^{k}(1-p)^{n-k}",
             font_size=36, color=WHITE,
@@ -266,7 +266,7 @@ class GaltonBoard(Scene):
         )
         formula_group = VGroup(box_formula, formula)
 
-        # ── Variable legend (Styled identical to formula box) ─────────────
+        
         legend = VGroup(
             MathTex(r"n", font_size=24, color=YELLOW),
             Text("= trials   ",        font_size=20, color=GRAY_A),
@@ -283,7 +283,7 @@ class GaltonBoard(Scene):
         )
         legend_group = VGroup(box_legend, legend)
 
-        # Draw the boxes and write the text inside them
+        
         self.play(Create(box_formula), Write(formula), run_time=1.2)
         self.wait(0.15)
         self.play(FadeIn(legend_group, shift=UP*0.1), run_time=0.80)

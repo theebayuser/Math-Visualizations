@@ -3,15 +3,15 @@ import numpy as np
 
 class SineCosineUnitCircle(Scene):
     def construct(self):
-        # Configuration - Black background
+        
         self.camera.background_color = BLACK
         
-        # Create gradient title with only first letters in mathbb and rest regular
+        
         title = MathTex(r"\mathbb{U}\text{nit}\ \mathbb{C}\text{ircle}\ \mathbb{G}\text{raphs}", font_size=48)
         title.set_color_by_gradient(BLUE, RED)
         title.to_edge(UP, buff=0.1)
         
-        # Even smaller axes and grid setup - will be centered as a group
+        
         cos_axes = Axes(
             x_range=[0, 2*PI, PI/2],
             y_range=[-1, 1, 1],
@@ -19,7 +19,7 @@ class SineCosineUnitCircle(Scene):
             y_length=1.4,
             axis_config={"color": GREY},
             tips=False,
-        ).shift(UP * 1.2)  # Positioned for grouping
+        ).shift(UP * 1.2)  
         
         sin_axes = Axes(
             x_range=[0, 2*PI, PI/2],
@@ -28,9 +28,9 @@ class SineCosineUnitCircle(Scene):
             y_length=1.4,
             axis_config={"color": GREY},
             tips=False,
-        ).shift(DOWN * 0.6)  # Positioned for grouping
+        ).shift(DOWN * 0.6)  
         
-        # Add grid lines to axes
+        
         for axes in [cos_axes, sin_axes]:
             axes.add(axes.get_x_axis().get_tick_marks())
             axes.add(axes.get_y_axis().get_tick_marks())
@@ -42,7 +42,7 @@ class SineCosineUnitCircle(Scene):
                 y_lines.add(Line(axes.c2p(0, y), axes.c2p(2*PI, y), stroke_width=1, stroke_color=GREY, stroke_opacity=0.6))
             axes.add(x_lines, y_lines)
         
-        # Add axis labels for pi values and -1, 1
+        
         cos_x_labels = VGroup()
         sin_x_labels = VGroup()
         for axes, labels_group in [(cos_axes, cos_x_labels), (sin_axes, sin_x_labels)]:
@@ -51,25 +51,25 @@ class SineCosineUnitCircle(Scene):
             labels_group.add(MathTex(r"1", font_size=24).next_to(axes.c2p(0, 1), LEFT, buff=0.1))
             labels_group.add(MathTex(r"-1", font_size=24).next_to(axes.c2p(0, -1), LEFT, buff=0.1))
         
-        # Repositioned labels - cos above, sin below
+        
         cos_label = MathTex(r"\cos\theta", color=BLUE, font_size=32).next_to(cos_axes, UP, buff=0.2)
         sin_label = MathTex(r"\sin\theta", color=RED, font_size=32).next_to(sin_axes, DOWN, buff=0.2)
         
-        # Unit circle positioned for grouping
+        
         circle_center = sin_axes.get_origin() + RIGHT * (sin_axes.x_length + 1.4)
         unit_circle = Circle(radius=0.8, color=GREEN, stroke_width=2.5).move_to(circle_center)
         
-        # Add coordinate axes for the unit circle
+        
         circle_axes = Axes(
             x_range=[-1, 1, 1],
             y_range=[-1, 1, 1],
-            x_length=1.6,  # Same as circle diameter
+            x_length=1.6,  
             y_length=1.6,
             axis_config={"color": GREY, "stroke_width": 1.5},
             tips=False,
         ).move_to(circle_center)
         
-        # Add tick marks and labels for unit circle axes
+        
         circle_x_labels = VGroup(
             MathTex(r"1", font_size=20).next_to(circle_axes.c2p(1, 0), RIGHT, buff=0.1),
             MathTex(r"-1", font_size=20).next_to(circle_axes.c2p(-1, 0), LEFT, buff=0.1)
@@ -79,16 +79,16 @@ class SineCosineUnitCircle(Scene):
             MathTex(r"-1", font_size=20).next_to(circle_axes.c2p(0, -1), DOWN, buff=0.1)
         )
         
-        # Theta tracker
+        
         theta_tracker = ValueTracker(0)
         
-        # Theta value display above cos graph
+        
         theta_display = always_redraw(lambda: 
             MathTex(rf"\theta = {theta_tracker.get_value() * 180 / PI:.0f}°", font_size=28, color=ORANGE)
             .next_to(cos_axes, UP, buff=0.7)
         )
         
-        # Create a group of all static elements and center it
+        
         diagram_group = VGroup(
             cos_axes, sin_axes,
             cos_x_labels, sin_x_labels,
@@ -96,10 +96,10 @@ class SineCosineUnitCircle(Scene):
             unit_circle, circle_axes, circle_x_labels, circle_y_labels
         )
         
-        # Center the entire diagram group
-        diagram_group.move_to(ORIGIN + DOWN * 0.3)  # Slight downward shift to account for title
         
-        # Moving dots
+        diagram_group.move_to(ORIGIN + DOWN * 0.3)  
+        
+        
         cos_dot = always_redraw(lambda: Dot(
             cos_axes.c2p(theta_tracker.get_value(), np.cos(theta_tracker.get_value())),
             color=BLUE, radius=0.06
@@ -113,16 +113,16 @@ class SineCosineUnitCircle(Scene):
             color=GREEN, radius=0.06
         ))
         
-        # Traced paths for the curves
+        
         cos_path = TracedPath(cos_dot.get_center, stroke_color=BLUE, stroke_width=3)
         sin_path = TracedPath(sin_dot.get_center, stroke_color=RED, stroke_width=3)
         
-        # Radius line from moving point to actual center of the unit circle
+        
         radius_line = always_redraw(lambda: Line(
             unit_circle.get_center(), circle_dot.get_center(), color=GREEN, stroke_width=1.5,
         ))
         
-        # Sine and Cosine components on unit circle (right triangle visualization)
+        
         cos_component = always_redraw(lambda: Line(
             unit_circle.get_center(),
             [circle_dot.get_center()[0], unit_circle.get_center()[1], 0],
@@ -135,7 +135,7 @@ class SineCosineUnitCircle(Scene):
             color=RED, stroke_width=2.5
         ))
         
-        # Horizontal tangent line
+        
         horizontal_tangent = Line(
             start=[cos_axes.get_origin()[0], unit_circle.get_top()[1], 0],
             end=[unit_circle.get_right()[0], unit_circle.get_top()[1], 0],
@@ -143,7 +143,7 @@ class SineCosineUnitCircle(Scene):
             stroke_width=1.2
         )
 
-        # Horizontal dotted line from cos dot
+        
         def get_cos_dotted_line():
             start_p = cos_dot.get_center()
             end_p = [cos_axes.c2p(2 * PI, 0)[0], start_p[1], 0]
@@ -151,7 +151,7 @@ class SineCosineUnitCircle(Scene):
 
         cos_dotted_line = always_redraw(get_cos_dotted_line)
 
-        # Vertical dotted line from circle dot
+        
         def get_circle_dotted_line():
             start_p = circle_dot.get_center()
             end_p = [start_p[0], horizontal_tangent.get_y(), 0]
@@ -159,30 +159,30 @@ class SineCosineUnitCircle(Scene):
 
         circle_dotted_line = always_redraw(get_circle_dotted_line)
 
-        # Corner arc - changed to green to match unit circle
+        
         def get_corner_arc():
             start_point = cos_dotted_line.get_end()
             end_point = circle_dotted_line.get_end()
             return ArcBetweenPoints(
                 start_point, end_point, 
                 angle=-PI/2, 
-                color=GREEN,  # Changed to green
+                color=GREEN,  
                 stroke_width=2
             )
 
         corner_arc = always_redraw(get_corner_arc)
 
-        # Sin projection line
+        
         sin_projection_line = always_redraw(lambda: DashedLine(
             circle_dot.get_center(),
             [sin_dot.get_center()[0], circle_dot.get_center()[1], 0],
             color=RED, stroke_width=1.5, dash_length=0.05, stroke_opacity=0.7
         ))
         
-        # Theta symbol at the center of unit circle
+        
         theta_symbol = MathTex(r"\theta", font_size=20, color=ORANGE).next_to(unit_circle.get_center(), DR, buff=0.15)
         
-        # Angle arc to show theta - stays in consistent direction
+        
         angle_arc = always_redraw(lambda: Arc(
             start_angle=0,
             angle=theta_tracker.get_value() % (2*PI),
@@ -191,13 +191,13 @@ class SineCosineUnitCircle(Scene):
             stroke_width=2
         ).move_arc_center_to(unit_circle.get_center()))
         
-        # Add traced paths
+        
         self.add(cos_path, sin_path)
         
-        # Title appears instantly
+        
         self.add(title)
         
-        # All static elements appear smoothly
+        
         self.play(
             AnimationGroup(
                 DrawBorderThenFill(cos_axes), FadeIn(cos_x_labels), FadeIn(cos_label),
@@ -215,10 +215,10 @@ class SineCosineUnitCircle(Scene):
             rate_func=smooth
         )
         
-        # Add the theta display after static elements are created
+        
         self.add(theta_display)
         
-        # Then animate the curve drawing
+        
         self.play(
             theta_tracker.animate.set_value(2*PI),
             run_time=12,

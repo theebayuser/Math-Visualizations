@@ -2,18 +2,18 @@ from manim import *
 
 class GoldenRatioUnfold(ThreeDScene):
     def construct(self):
-        # --- Title ---
+        
         title = Tex(r"$\mathbb{T}$he $\mathbb{G}$olden $\mathbb{R}$atio", font_size=48)
         self.add_fixed_in_frame_mobjects(title)
         title.to_edge(UP, buff=1.0) 
 
-        # --- Configuration ---
+        
         fibs = [1, 1, 2, 3, 5, 8, 13, 21, 34]
         scale_factor = 0.10 
         
         palette = [RED_E, ORANGE, YELLOW, GREEN, TEAL, BLUE, PURPLE, MAROON, GOLD]
 
-        # --- Scene 1 Setup: Pre-calculate layout ---
+        
         squares = VGroup()
         s0 = Square(
             side_length=fibs[0], 
@@ -37,7 +37,7 @@ class GoldenRatioUnfold(ThreeDScene):
         squares.move_to(ORIGIN).shift(DOWN * 1.0)
         squares.scale(scale_factor)
 
-        # Pre-calculate arcs for the spiral
+        
         arc_corners = [(UL, DR), (DL, UR), (DR, UL), (UR, DL)]
         original_arcs = VGroup()
         
@@ -48,7 +48,7 @@ class GoldenRatioUnfold(ThreeDScene):
 
         arcs = original_arcs.copy()
 
-        # --- Animated Scene 1 & 2: Reveal ---
+        
         self.add(arcs)
         self.wait(0.5)
         self.play(FadeIn(squares, lag_ratio=0.1), run_time=2.0)
@@ -56,7 +56,7 @@ class GoldenRatioUnfold(ThreeDScene):
         
         original_centers = [sq.get_center() for sq in squares] 
 
-        # --- Scene 3: Unfold & ZOOM OUT ---
+        
         unfolded_squares = VGroup(*[
             Square(side_length=sq.width, color=WHITE, stroke_width=1.5, fill_opacity=0.6, fill_color=sq.get_fill_color()) 
             for sq in squares
@@ -68,7 +68,7 @@ class GoldenRatioUnfold(ThreeDScene):
 
         unfolded_squares.move_to(ORIGIN).shift(DOWN * 1.0)
         
-        # Calculate the 2D perfectly straight line segments
+        
         flat_diagonal_lines = VGroup()
         total_width = sum([sq.width for sq in unfolded_squares])
         start_2d = unfolded_squares[0].get_corner(DL)
@@ -92,11 +92,11 @@ class GoldenRatioUnfold(ThreeDScene):
         )
         self.wait(0.5) 
 
-        # --- Scene 4: Transform to 3D Cubes & 3D Line ---
+        
         cubes = VGroup()
         cube_lines = VGroup()
 
-        # Calculate the absolute 3D start and end points for ONE continuous straight line
+        
         w_first = unfolded_squares[0].width
         w_last = unfolded_squares[-1].width
         start_3d = unfolded_squares[0].get_center() + np.array([-w_first/2, -w_first/2, -w_first/2])
@@ -105,14 +105,14 @@ class GoldenRatioUnfold(ThreeDScene):
 
         curr_t = 0
         for sq in unfolded_squares:
-            # Setup Cubes
+            
             c = Cube(side_length=sq.width, fill_opacity=0.7, fill_color=sq.get_fill_color(), stroke_color=WHITE, stroke_width=1.5)
             c.move_to(sq.get_center())
             c.save_state()
             c.stretch(0.001, dim=2)
             cubes.add(c)
 
-            # Chop the single 3D line into proportional segments so the morphing doesn't break
+            
             t_next = curr_t + (sq.width / total_width)
             p1 = start_3d + curr_t * vec_3d
             p2 = start_3d + t_next * vec_3d
@@ -122,7 +122,7 @@ class GoldenRatioUnfold(ThreeDScene):
             cube_lines.add(cl)
             curr_t = t_next
 
-        # Invisible swap
+        
         self.remove(unfolded_squares, flat_diagonal_lines)
         self.add(cubes, cube_lines)
 
@@ -135,7 +135,7 @@ class GoldenRatioUnfold(ThreeDScene):
         )
         self.wait(0.5)
 
-        # --- Scene 5: Rearrange Cubes & Restore Spiral ---
+        
         final_spiral = original_arcs.copy() 
         
         self.play(
@@ -147,7 +147,7 @@ class GoldenRatioUnfold(ThreeDScene):
         self.move_camera(zoom=1.0, run_time=1.5)
         self.wait(0.5)
 
-        # --- Scene 6: Display Area Labels ---
+        
         numbers = VGroup()
         for i, cube in enumerate(cubes):
             num = MathTex(str(fibs[i]), color=WHITE)
@@ -160,7 +160,7 @@ class GoldenRatioUnfold(ThreeDScene):
         self.play(Write(numbers), run_time=1.5)
         self.wait(0.5)
 
-        # --- Scene 7: Flatten back to 2D ---
+        
         self.move_camera(phi=0 * DEGREES, theta=-90 * DEGREES, zoom=1.0, run_time=1.5)
 
         self.play(

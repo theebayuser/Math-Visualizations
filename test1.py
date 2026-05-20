@@ -6,34 +6,34 @@ class GaussSummationReel(MovingCameraScene):
     optimized for social media formats like Instagram Reels.
     """
     def construct(self):
-        # --- Scene Setup ---
-        # Set a slightly zoomed-in view to better frame the content
+        
+        
         self.camera.frame.set(width=8)
 
-        # --- Part 1: Introduction ---
+        
         intro_mobjects = self.play_intro()
         self.play(FadeOut(*intro_mobjects, run_time=0.5))
         self.wait(0.2)
 
-        # --- Part 2: Geometric Construction ---
+        
         staircase_group, sum_text = self.build_staircase()
         
-        # Center the main figure and shift it up slightly
+        
         main_figure = VGroup(staircase_group, sum_text).center().shift(UP * 0.5)
         self.play(FadeIn(main_figure, run_time=0.75))
         
-        # Zoom in to focus on the staircase for the proof
+        
         self.play(
             self.camera.frame.animate.scale(0.8).move_to(staircase_group),
             run_time=0.75
         )
         self.wait(0.25)
         
-        # --- Part 3: Adding Braces ---
+        
         braces_and_labels = self.add_braces(staircase_group)
         self.wait(0.5)
 
-        # --- Part 4: The Area Proof ---
+        
         self.play(FadeOut(sum_text, run_time=0.5))
         self.show_area_proof(staircase_group, braces_and_labels)
         
@@ -41,11 +41,11 @@ class GaussSummationReel(MovingCameraScene):
 
     def play_intro(self):
         """Creates the fast-paced introductory animation."""
-        # Title is smaller and placed at the very top
+        
         title = Text("Gauss Summation", font_size=40).set_color_by_gradient(RED_A, PURPLE_A)
         title.to_edge(UP, buff=0.2)
 
-        # Formula is smaller to fit the tighter frame
+        
         formula = MathTex(r"1 + 2 + \dots + n = \frac{n(n+1)}{2}", font_size=48)
         formula.next_to(title, DOWN, buff=0.5)
         
@@ -62,17 +62,17 @@ class GaussSummationReel(MovingCameraScene):
     def build_staircase(self):
         """Builds the staircase with faster, tighter animations."""
         n = 5
-        square_size = 0.4  # Smaller squares for a compact fit
+        square_size = 0.4  
         staircase_color = RED_D
         staircase_fill_color = RED_E
 
         staircase = VGroup()
         origin_point = ORIGIN
         
-        # The sum text object that will be transformed
+        
         sum_text = MathTex("1", font_size=36).next_to(origin_point, DOWN, buff=0.3)
 
-        # Build first column
+        
         col_1 = Square(
             side_length=square_size,
             stroke_color=staircase_color,
@@ -81,13 +81,13 @@ class GaussSummationReel(MovingCameraScene):
             fill_opacity=0.6
         ).move_to(origin_point, aligned_edge=DL)
         
-        staircase.add(VGroup(col_1)) # Wrap in VGroup for consistency
+        staircase.add(VGroup(col_1)) 
         self.play(Create(col_1, run_time=0.3), Write(sum_text, run_time=0.3))
         self.wait(0.1)
         
         prev_column = staircase[0]
         
-        # Loop to build the remaining columns quickly
+        
         for i in range(2, n + 1):
             column = VGroup(*[col_1.copy() for _ in range(i)]).arrange(UP, buff=0)
             column.next_to(prev_column, RIGHT, buff=0, aligned_edge=DOWN)
@@ -127,7 +127,7 @@ class GaussSummationReel(MovingCameraScene):
         """Shows the visual area proof with snappy animations."""
         bottom_brace = braces_and_labels[0]
         
-        # Get coordinates for drawing helper geometry
+        
         bl, br, ur = staircase.get_corner(DL), staircase.get_corner(DR), staircase.get_corner(UR)
         
         diagonal = Line(bl, ur, color=WHITE, stroke_width=2)
@@ -136,14 +136,14 @@ class GaussSummationReel(MovingCameraScene):
         self.play(Create(diagonal), FadeIn(large_triangle), run_time=0.5)
         self.wait(0.2)
         
-        # Formula transformations
+        
         formula_1 = MathTex(r"\frac{n^2}{2}", font_size=42).next_to(bottom_brace, DOWN, buff=0.3)
         self.play(Write(formula_1))
         self.wait(0.75)
         
         self.play(FadeOut(large_triangle, diagonal), run_time=0.5)
         
-        # Highlight the n small half-squares
+        
         half_squares = VGroup(*[
             Polygon(
                 s[-1].get_corner(UL), s[-1].get_corner(UR), s[-1].get_corner(DR),
@@ -151,7 +151,7 @@ class GaussSummationReel(MovingCameraScene):
             ) for s in staircase
         ])
         
-        # Use Circumscribe to draw attention to the pieces being added
+        
         self.play(LaggedStart(*[Circumscribe(h, fade_out=True) for h in half_squares], lag_ratio=0.1, run_time=1.5))
         
         formula_2 = MathTex(r"\frac{n^2}{2}", r"+", r"\frac{n}{2}", font_size=42).move_to(formula_1)

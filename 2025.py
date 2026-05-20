@@ -1,6 +1,6 @@
 from manim import *
 
-# Define custom colors
+
 C_RED = "#d13b3b"
 C_ORANGE = "#e3882f"
 C_GREEN = "#69a04a"
@@ -10,7 +10,7 @@ C_WHITE = "#FFFFFF"
 class SumOfCubesProof(Scene):
     def construct(self):
         self.camera.background_color = BLACK
-        unit_size = 0.35 # Scaled to fit in the center third
+        unit_size = 0.35 
         
         special_text = Tex(r"$\mathbb{Y}$ear 2025 is $\mathbb{S}$pecial!", font_size=60)
         special_text.set_color_by_gradient(BLUE, RED)

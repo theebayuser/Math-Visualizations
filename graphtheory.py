@@ -10,23 +10,23 @@ Run:
 from manim import *
 import numpy as np
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PALETTE
-# ══════════════════════════════════════════════════════════════════════════════
-BG        = BLACK
-EULER_C   = "#00C8FF"   # sky-blue  — Eulerian  (all text this color)
-HAM_C     = "#FF6060"   # coral-red — Hamiltonian (all text this color)
 
-BASE_EDGE = WHITE       # unused edges are white
-DIM_OP    = 0.12        # opacity of base edge after traversal
+
+
+BG        = BLACK
+EULER_C   = "#00C8FF"   
+HAM_C     = "#FF6060"   
+
+BASE_EDGE = WHITE       
+DIM_OP    = 0.12        
 NODE_FILL = "#111122"
 
-# Vertical shift applied to everything except titles
+
 CONTENT_SHIFT_Y = 0.10
 
-# ══════════════════════════════════════════════════════════════════════════════
-# GRAPH LAYOUTS
-# ══════════════════════════════════════════════════════════════════════════════
+
+
+
 N = 5
 
 def wheel_pos(cx=0.0, cy=0.0, r=1.25):
@@ -52,12 +52,12 @@ def eidx(a, b):
     if a > b: a, b = b, a
     return ALL_EDGES.index((a, b))
 
-# ── Traversal sequences ────────────────────────────────────────────────────
+
 EULER_CIRCUIT = [
     (0,1),(1,2),(2,3),(3,4),(4,0),
     (0,2),(2,4),(4,1),(1,3),(3,0),
 ]
-EULER_PATH = EULER_CIRCUIT[:-1]   # drop last edge → open walk
+EULER_PATH = EULER_CIRCUIT[:-1]   
 
 HAM_PATH  = [(0,1),(1,2),(2,3),(3,4)]
 HAM_CYCLE = [(0,1),(1,2),(2,3),(3,4),(4,0)]
@@ -80,19 +80,19 @@ PENTA_OFFSETS = [
 ]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 class EulerHamiltonianShowcase(Scene):
-# ══════════════════════════════════════════════════════════════════════════════
+
 
     def construct(self):
         self.camera.background_color = BG
 
-        # Graph centers — sides pulled close together
+        
         LX = -1.85
         RX =  1.85
-        # Title centre Y ≈ 3.35, box centre Y ≈ BOX_Y below.
-        # Graph centre sits midway between them.
-        GY = 0.70   # vertically centered between title and bottom box
+        
+        
+        GY = 0.70   
 
         lpos = penta_pos(LX, GY)
         rpos = penta_pos(RX, GY)
@@ -103,13 +103,13 @@ class EulerHamiltonianShowcase(Scene):
         l_nlbls = self._node_labels(lpos, EULER_C, PENTA_OFFSETS)
         r_nlbls = self._node_labels(rpos, HAM_C,   PENTA_OFFSETS)
 
-        # Titles — fixed near top
+        
         TY = 3.35
         t_euler = self._title("Eulerian Path",    EULER_C, LX, TY)
         t_ham   = self._title("Hamiltonian Path", HAM_C,   RX, TY)
 
-        # Bottom boxes — sit below the graph
-        BOX_Y = -2.00 + CONTENT_SHIFT_Y   # ≈ -1.90
+        
+        BOX_Y = -2.00 + CONTENT_SHIFT_Y   
 
         box_l = self._box(
             ["Traverse every edge exactly once"],
@@ -120,7 +120,7 @@ class EulerHamiltonianShowcase(Scene):
             HAM_C, RX, BOX_Y
         )
 
-        # ── Everything appears immediately ────────────────────────────────────
+        
         self.add(
             *lgraph["edges"], *rgraph["edges"],
             *lgraph["nodes"], *rgraph["nodes"],
@@ -130,16 +130,16 @@ class EulerHamiltonianShowcase(Scene):
         )
         self.wait(0.5)
 
-        # ══ PHASE 1: Eulerian Path  +  Hamiltonian Path ═══════════════════════
+        
         l_hls, r_hls = self._animate_dual(
             lpos, lgraph, EULER_PATH,  False, EULER_C,
             rpos, rgraph, HAM_PATH,    True,  HAM_C,
         )
         self.wait(1.2)
 
-        # ══ TRANSITION → Circuit / Cycle ══════════════════════════════════════
+        
         t_euler2 = self._title("Eulerian Circuit",  EULER_C, LX, TY)
-        t_ham2   = self._title("Hamiltonian Cycle", HAM_C,   RX, TY)  # LX/RX already in scope
+        t_ham2   = self._title("Hamiltonian Cycle", HAM_C,   RX, TY)  
 
         box_l2 = self._box(
             ["Traverse all edges exactly once",
@@ -166,13 +166,13 @@ class EulerHamiltonianShowcase(Scene):
             run_time=0.65,
         )
 
-        # ══ PHASE 2: Eulerian Circuit  +  Hamiltonian Cycle ═══════════════════
+        
         _, _ = self._animate_dual(
             lpos, lgraph, EULER_CIRCUIT, False, EULER_C,
             rpos, rgraph, HAM_CYCLE,     True,  HAM_C,
         )
 
-        # Pulse start nodes to show "returned home"
+        
         self.play(
             lgraph["nodes"][EULER_CIRCUIT[0][0]].animate
                 .scale(1.5).set_fill(EULER_C).set_stroke(WHITE, width=3),
@@ -191,9 +191,9 @@ class EulerHamiltonianShowcase(Scene):
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # DUAL ANIMATION
-    # ══════════════════════════════════════════════════════════════════════════
+    
+    
+    
     def _animate_dual(
         self,
         lpos, lg, l_edges, is_node_mode_l, col_l,
@@ -253,9 +253,9 @@ class EulerHamiltonianShowcase(Scene):
         self.play(FadeOut(lc), FadeOut(rc), run_time=0.2)
         return lhls, rhls
 
-    # ══════════════════════════════════════════════════════════════════════════
-    # HELPERS
-    # ══════════════════════════════════════════════════════════════════════════
+    
+    
+    
     def _title(self, text, col, cx, cy):
         """
         \mathbb{First} + \text{rest}, both in col, baseline-aligned.
@@ -267,16 +267,16 @@ class EulerHamiltonianShowcase(Scene):
         bb   = MathTex(rf"\mathbb{{{first}}}", color=col, font_size=46)
         body = MathTex(rf"\text{{{rest}}}",    color=col, font_size=38)
 
-        # Arrange right, then correct the mathbb vertical drift
+        
         grp = VGroup(bb, body).arrange(RIGHT, buff=0.07)
 
-        # Align both to a common baseline: snap bottoms, then shift bb down
-        # so its cap-height aligns with the text capline rather than floating.
+        
+        
         body_bottom = body.get_bottom()[1]
         bb_bottom   = bb.get_bottom()[1]
-        bb.shift(DOWN * (bb_bottom - body_bottom))   # level the bottoms first
-        # Then push bb up just a touch so the letter sits on the same cap line
-        # (mathbb cap > text cap by roughly this amount at these font sizes)
+        bb.shift(DOWN * (bb_bottom - body_bottom))   
+        
+        
         bb.shift(UP * 0.03)
 
         grp.move_to([cx, cy, 0])
@@ -292,9 +292,9 @@ class EulerHamiltonianShowcase(Scene):
             nodes.append(c)
         for (i, j) in ALL_EDGES:
             ln = Line(positions[i], positions[j],
-                      stroke_color=BASE_EDGE,   # WHITE
+                      stroke_color=BASE_EDGE,   
                       stroke_width=1.5,
-                      stroke_opacity=0.55)      # slightly dimmed so traversal pop is clear
+                      stroke_opacity=0.55)      
             edges.append(ln)
         return {"nodes": nodes, "edges": edges}
 

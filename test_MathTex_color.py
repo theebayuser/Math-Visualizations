@@ -2,7 +2,7 @@ from manim import *
 
 class TestFixScene(Scene):
     def construct(self):
-        # original colors
+        
         color_adj = "#3dc6af"
         color_hyp = "#ff9040"
         color_emp = YELLOW_D

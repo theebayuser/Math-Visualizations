@@ -11,7 +11,7 @@ BG       = "#000000"
 DOT_COL  = "#00E5FF"
 LINE_COL = "#FF6B6B"
 RES_COL  = "#FFD166"
-FS       = 26          # was 20 — larger equations
+FS       = 26          
 
 
 def fit(pts):
@@ -57,10 +57,10 @@ class LinearRegressionScene(Scene):
     def construct(self):
         self.camera.background_color = BG
 
-        # ── TITLE — mathbb first letters + gradient fill ──────────────────────
+        
         title = make_gradient_title()
 
-        # ── AXES ──────────────────────────────────────────────────────────────
+        
         ax = Axes(
             x_range=[0, 10, 2], y_range=[0, 10, 2],
             x_length=4.0, y_length=3.6,
@@ -72,7 +72,7 @@ class LinearRegressionScene(Scene):
             },
         ).move_to(UP * 0.85)
 
-        # ── EQUATIONS ─────────────────────────────────────────────────────────
+        
         eq_model = MathTex(r"\hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x",
                            font_size=FS, color=WHITE)
         eq_resid = MathTex(r"e_i = y_i - \hat{y}_i",
@@ -104,7 +104,7 @@ class LinearRegressionScene(Scene):
         panel_fill.move_to(eq_col)
         panel_stroke.move_to(eq_col)
 
-        # ── DRAW EVERYTHING IN AT START ───────────────────────────────────────
+        
         self.play(Write(title), Create(ax), run_time=1.0)
         self.play(
             FadeIn(panel_fill),
@@ -118,7 +118,7 @@ class LinearRegressionScene(Scene):
         live_resid = eq_resid
         live_rss   = eq_rss
 
-        # ── DATA POINTS ───────────────────────────────────────────────────────
+        
         raw_pts = [
             (0.7, 1.0),
             (1.4, 4.9),
@@ -153,7 +153,7 @@ class LinearRegressionScene(Scene):
                 m, b = fit(cur)
                 y_hat = m * dx + b
 
-                # Clip the regression line to the axes box [0,10] x [0,10]
+                
                 _x0, _x1 = 0.0, 10.0
                 _y0, _y1 = 0.0, 10.0
                 _cands = [_x0, _x1]

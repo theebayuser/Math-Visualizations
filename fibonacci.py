@@ -2,19 +2,19 @@ from manim import *
 
 class FibonacciProofFinal(Scene):
     def construct(self):
-        # --- 1. Aesthetic Configuration ---
+        
         self.camera.background_color = BLACK
         
-        # Custom Palette
-        C_BLUE = "#38BDF8"   # Light Blue
-        C_TEAL = "#2DD4BF"   # Teal
-        C_GREEN = "#A3E635"  # Lime Green
-        C_YELLOW = "#FACC15" # Warm Yellow
-        C_ORANGE = "#FB923C" # Orange
-        C_RED = "#F87171"    # Soft Red
-        C_PURPLE = "#C084FC" # Purple
         
-        HIGHLIGHT = "#00E5FF" # Cyan Highlight
+        C_BLUE = "#38BDF8"   
+        C_TEAL = "#2DD4BF"   
+        C_GREEN = "#A3E635"  
+        C_YELLOW = "#FACC15" 
+        C_ORANGE = "#FB923C" 
+        C_RED = "#F87171"    
+        C_PURPLE = "#C084FC" 
+        
+        HIGHLIGHT = "#00E5FF" 
         
         colors = [C_BLUE, C_TEAL, C_GREEN, C_YELLOW, C_ORANGE, C_RED, C_PURPLE, C_BLUE]
         fib_seq = [1, 1, 2, 3, 5, 8, 13, 21]
@@ -23,13 +23,13 @@ class FibonacciProofFinal(Scene):
         directions = [RIGHT, UP, LEFT, DOWN]
         alignments = [DOWN, RIGHT, UP, LEFT]
 
-        # --- 2. Title (Top Edge) ---
+        
         title = MathTex(r"\mathbb{F}\text{ibonacci } \mathbb{I}\text{dentity}", font_size=64)
         title.set_color_by_gradient(C_BLUE, C_RED)
         title.to_edge(UP, buff=0.1)
         self.add(title)
 
-        # --- 3. Geometry Position Calculation ---
+        
         shadow_group = VGroup()
         s1_shadow = Square(side_length=fib_seq[0] * scale_factor)
         shadow_group.add(s1_shadow)
@@ -42,18 +42,18 @@ class FibonacciProofFinal(Scene):
             sq.next_to(agg_shadow, directions[d_idx], buff=0, aligned_edge=alignments[d_idx])
             agg_shadow.add(sq)
 
-        # Shift Logic: Move Figure DOWN significantly to make room for equations above
+        
         center_shift = ORIGIN - agg_shadow.get_center() + DOWN * 1.0 + LEFT * 0.3
 
-        # --- 4. Geometry Animation ---
+        
         squares = []
         
-        # -- First Square (1) --
+        
         s1 = Square(side_length=fib_seq[0] * scale_factor)
         s1.move_to(center_shift)
         s1.set_fill(colors[0], 0.6).set_stroke(WHITE, 1.5)
         
-        # Double Arrow Label
+        
         arrow_s1 = DoubleArrow(
             start=s1.get_corner(UL), 
             end=s1.get_corner(UR), 
@@ -73,7 +73,7 @@ class FibonacciProofFinal(Scene):
         
         current_shape = VGroup(s1)
 
-        # -- Loop for Remaining Squares --
+        
         for i in range(1, len(fib_seq)):
             n = fib_seq[i]
             d_idx = (i - 1) % 4
@@ -91,13 +91,13 @@ class FibonacciProofFinal(Scene):
             current_shape.add(sq)
             squares.append(sq)
 
-        # --- 5. Dimension Morphing ---
-        last_sq = squares[-1]      # 21
-        prev_sq = squares[-2]      # 13
-        prev2_sq = squares[-3]     # 8
+        
+        last_sq = squares[-1]      
+        prev_sq = squares[-2]      
+        prev2_sq = squares[-3]     
         rest_group = VGroup(*squares[:-1])
 
-        # Width Morph
+        
         brace_w_rest = Brace(rest_group, DOWN, buff=0.05)
         lbl_w_rest = MathTex("13", font_size=24).next_to(brace_w_rest, DOWN, buff=0.05)
         brace_w_last = Brace(last_sq, DOWN, buff=0.05)
@@ -114,7 +114,7 @@ class FibonacciProofFinal(Scene):
             run_time=1
         )
 
-        # Height Morph
+        
         brace_h_8 = Brace(prev2_sq, RIGHT, buff=0.05)
         lbl_h_8 = MathTex("8", font_size=24).next_to(brace_h_8, RIGHT, buff=0.05)
         brace_h_13 = Brace(prev_sq, RIGHT, buff=0.05)
@@ -131,7 +131,7 @@ class FibonacciProofFinal(Scene):
             run_time=1
         )
 
-        # --- 6. Equation Line 1: Summation (MOVED UP) ---
+        
         
         eq_group = VGroup()
         plus_symbol = MathTex("+", font_size=28)
@@ -148,7 +148,7 @@ class FibonacciProofFinal(Scene):
         eq_group.arrange(RIGHT, buff=0.15)
         eq_group.center()
         
-        # Move Equation UP (Between Title and Figure)
+        
         eq_group.move_to(UP * 2.0)
         
         for i, term in enumerate(terms_mobjects):
@@ -167,14 +167,14 @@ class FibonacciProofFinal(Scene):
                 
         self.wait(0.8)
 
-        # --- 7. Equation Line 2: Result ---
+        
         equals_sign = MathTex("=", font_size=36)
         val_21 = MathTex("21", font_size=36, color=HIGHLIGHT)
         dot = MathTex(r"\cdot", font_size=36)
         val_34 = MathTex("34", font_size=36, color=HIGHLIGHT)
         
         temp_group = VGroup(equals_sign, val_21, dot, val_34).arrange(RIGHT, buff=0.2)
-        # Position directly below the summation equation
+        
         temp_group.next_to(eq_group, DOWN, buff=0.3)
         
         self.play(Write(equals_sign))
@@ -195,7 +195,7 @@ class FibonacciProofFinal(Scene):
         
         self.wait(1)
 
-        # --- 8. The General Reveal ---
+        
         
         gen_width = MathTex("F_{n+1}", font_size=36, color=HIGHLIGHT).move_to(lbl_width_final)
         gen_height = MathTex("F_n", font_size=36, color=HIGHLIGHT).move_to(lbl_height_final)

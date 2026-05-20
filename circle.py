@@ -3,7 +3,7 @@ import numpy as np
 
 class LawOfCosinesDerivation(Scene):
     def construct(self):
-        # ── Color palette ──────────────────────────────────────────────────────
+        
         color_a   = BLUE_C
         color_b   = GREEN_C
         color_c   = RED_C
@@ -18,14 +18,14 @@ class LawOfCosinesDerivation(Scene):
             r"\theta": color_emp,
         }
 
-        # ── Title with mathbb L and C ──────────────────────────────────────────
+        
         title = MathTex(
             r"\mathbb{L}\text{aw of }\mathbb{C}\text{osines}",
             font_size=36, color=WHITE
         )
         title.to_edge(UP, buff=0.18)
 
-        # ── Geometry parameters ────────────────────────────────────────────────
+        
         a_val   = 1.85
         b_val   = 1.45
         theta_v = 48 * DEGREES
@@ -38,11 +38,11 @@ class LawOfCosinesDerivation(Scene):
         B_pt   = A_pt + b_val * dir_AB
         c_val  = float(np.linalg.norm(B_pt - O_pt))
 
-        # ── Circle & centre ────────────────────────────────────────────────────
+        
         circle     = Circle(radius=a_val, color=WHITE, stroke_opacity=0.40).move_to(O_pt)
         center_dot = Dot(O_pt, color=WHITE, radius=0.05)
 
-        # ── Triangle sides ─────────────────────────────────────────────────────
+        
         line_a = Line(O_pt, A_pt, color=color_a, stroke_width=2.5)
         line_b = Line(A_pt, B_pt, color=color_b, stroke_width=2.5)
         line_c = Line(O_pt, B_pt, color=color_c, stroke_width=2.5)
@@ -53,7 +53,7 @@ class LawOfCosinesDerivation(Scene):
             (O_pt + B_pt) / 2 + LEFT * 0.28 + UP * 0.05
         )
 
-        # ── Angle theta at vertex A ────────────────────────────────────────────
+        
         ray_AB_line = Line(A_pt, B_pt)
         ray_AO_line = Line(A_pt, O_pt)
         angle_arc   = Angle(ray_AB_line, ray_AO_line, radius=0.36, color=color_emp)
@@ -61,7 +61,7 @@ class LawOfCosinesDerivation(Scene):
             Angle(ray_AB_line, ray_AO_line, radius=0.60).point_from_proportion(0.5)
         )
 
-        # ── Draw title, circle, and triangle all at the same time ─────────────
+        
         self.play(
             Write(title),
             Create(circle),
@@ -75,7 +75,7 @@ class LawOfCosinesDerivation(Scene):
         )
         self.wait(0.1)
 
-        # ── Chord through B (along OB diameter direction) ──────────────────────
+        
         dir_OB  = (B_pt - O_pt) / c_val
         P_near  = O_pt + a_val * dir_OB
         P_far   = O_pt - a_val * dir_OB
@@ -93,7 +93,7 @@ class LawOfCosinesDerivation(Scene):
             (O_pt + P_far) / 2 + perp_OB * 0.32
         )
 
-        # ── Second chord: extend AB beyond B to circle at Q ───────────────────
+        
         BmO  = B_pt - O_pt
         qa   = float(np.dot(dir_AB, dir_AB))
         qb   = float(2 * np.dot(BmO, dir_AB))
@@ -111,7 +111,7 @@ class LawOfCosinesDerivation(Scene):
         self.play(Write(lbl_a_minus_c), Write(lbl_a_far))
         self.wait(0.1)
 
-        # ── Diameter A -> A_opp and hypotenuse line ────────────────────────────
+        
         A_opp = O_pt - np.array([a_val, 0.0, 0.0])
 
         dash_diam = DashedLine(A_pt, A_opp, color=BLUE_A,
@@ -125,7 +125,7 @@ class LawOfCosinesDerivation(Scene):
         self.play(Write(lbl_2a))
         self.wait(0.01)
 
-        # Right-angle square mark at Q
+        
         dir_QA    = (A_pt  - Q_pt) / np.linalg.norm(A_pt  - Q_pt)
         dir_QAopp = (A_opp - Q_pt) / np.linalg.norm(A_opp - Q_pt)
         sq        = 0.10
@@ -139,11 +139,11 @@ class LawOfCosinesDerivation(Scene):
         self.play(Create(right_mark))
         self.wait(0.3)
 
-        # ── cos theta derivation ───────────────────────────────────────────────
+        
         line_AQ = Line(A_pt, Q_pt, color=color_adj, stroke_width=2.2)
         self.play(Create(line_AQ))
 
-        # Step 1: cos theta = adj/hyp
+        
         cos_eq0 = MathTex(
             r"\cos", r"\theta", r"=",
             r"\frac{\text{adj}}{\text{hyp}}",
@@ -163,7 +163,7 @@ class LawOfCosinesDerivation(Scene):
         )
         self.wait(0.2)
 
-        # Step 2: hyp * cos theta = adj
+        
         cos_eq1 = MathTex(
             r"\text{hyp}", r"\cdot", r"\cos", r"\theta", r"=", r"\text{adj}",
             font_size=28
@@ -176,7 +176,7 @@ class LawOfCosinesDerivation(Scene):
         self.play(TransformMatchingTex(cos_eq0, cos_eq1))
         self.wait(0.2)
 
-        # Step 3: 2a * cos theta = adj
+        
         cos_eq2 = MathTex(
             r"2", r"a", r"\cdot", r"\cos", r"\theta", r"=", r"\text{adj}",
             font_size=28
@@ -194,10 +194,10 @@ class LawOfCosinesDerivation(Scene):
         )
         self.wait(0.6)
 
-        # ── Fly "2a cos theta" from equation onto the diagram as AQ label ──────
+        
         aq_label_pos = (A_pt + Q_pt) / 2 + perp_AB * (-0.38)
 
-        # Full teal to match line_AQ
+        
         lbl_AQ = MathTex(r"2a\cos\theta", font_size=21)
         lbl_AQ.set_color(color_adj)
         lbl_AQ.move_to(aq_label_pos)
@@ -213,7 +213,7 @@ class LawOfCosinesDerivation(Scene):
         self.add(lbl_AQ)
         self.wait(0.4)
 
-        # Label BQ extension
+        
         lbl_BQ = MathTex(r"2a\cos\theta - b", font_size=22).move_to(
             (B_pt + Q_pt) / 2 + perp_AB * 0.38
         )
@@ -221,7 +221,7 @@ class LawOfCosinesDerivation(Scene):
         self.play(Write(lbl_BQ))
         self.wait(0.6)
 
-        # ── Power of a Point equation ──────────────────────────────────────────
+        
         eq1 = MathTex(
             "(", "a", "+", "c", ")(", "a", "-", "c", ")",
             "=",
@@ -229,14 +229,14 @@ class LawOfCosinesDerivation(Scene):
             font_size=28
         )
         eq1.set_color_by_tex_to_color_map(tex_colors)
-        # Move equation higher than before
+        
         eq1.to_edge(DOWN, buff=1.55)
 
-        # Label sits below the equation, inside the same box
+        
         pop_label = Tex("Power of a Point", font_size=20, color=color_emp)
         pop_label.next_to(eq1, DOWN, buff=0.20)
 
-        # One box that covers both the equation and label
+        
         combined = VGroup(eq1, pop_label)
         pop_box = BackgroundRectangle(
             combined, color="#1a1a2e", fill_opacity=0.82,
@@ -244,7 +244,7 @@ class LawOfCosinesDerivation(Scene):
         )
         pop_box.set_stroke(color=WHITE, width=1.2, opacity=0.7)
 
-        # Highlight BOTH chords simultaneously while writing the equation
+        
         self.play(
             FadeIn(pop_box),
             Write(eq1),
@@ -258,7 +258,7 @@ class LawOfCosinesDerivation(Scene):
         )
         self.wait(0.6)
 
-        # Restore all strokes
+        
         self.play(
             line_c.animate.set_stroke(color=color_c, width=2.5),
             dash1.animate.set_stroke(color=GREY_B, width=1.8),
@@ -269,7 +269,7 @@ class LawOfCosinesDerivation(Scene):
         )
         self.wait(0.5)
 
-        # Expand: a^2 - c^2 = 2ab cos theta - b^2
+        
         eq2 = MathTex(
             "a", "^2", "-", "c", "^2",
             "=",
@@ -286,7 +286,7 @@ class LawOfCosinesDerivation(Scene):
         )
         self.wait(1.0)
 
-        # Rearrange: c^2 = a^2 + b^2 - 2ab cos theta
+        
         eq3 = MathTex(
             "c", "^2",
             "=",

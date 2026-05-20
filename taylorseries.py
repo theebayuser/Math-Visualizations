@@ -3,16 +3,16 @@ import numpy as np
 
 class TaylorSeriesEx(Scene):
     def construct(self):
-        # Set white background
+        
         self.camera.background_color = WHITE
         
-        # Title
+        
         title = MathTex(r"\text{Taylor Series for } e^x", font_size=48, color=BLUE)
         title.to_edge(UP, buff=0.2)
         self.play(Write(title), run_time=1)
         self.wait(0.5)
         
-        # Show the general Taylor series formula
+        
         taylor_general = MathTex(
             r"f(x) = f(0) + f'(0)x + \frac{f''(0)}{2!}x^2 + \frac{f'''(0)}{3!}x^3 + \cdots",
             font_size=32,
@@ -23,7 +23,7 @@ class TaylorSeriesEx(Scene):
         self.play(Write(taylor_general), run_time=1.5)
         self.wait(0.5)
         
-        # Show derivatives of e^x
+        
         derivatives_text = MathTex(
             r"\text{For } f(x) = e^x:",
             font_size=28,
@@ -46,7 +46,7 @@ class TaylorSeriesEx(Scene):
         self.play(Write(derivatives), run_time=1.2)
         self.wait(0.5)
         
-        # Show that all derivatives equal 1 at x=0
+        
         at_zero = MathTex(
             r"\text{At } x = 0: \quad f(0) = f'(0) = f''(0) = \cdots = 1",
             font_size=28,
@@ -57,7 +57,7 @@ class TaylorSeriesEx(Scene):
         self.play(Write(at_zero), run_time=1)
         self.wait(0.5)
         
-        # Show the resulting Taylor series
+        
         taylor_series = MathTex(
             r"e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} + \cdots",
             font_size=32,
@@ -68,7 +68,7 @@ class TaylorSeriesEx(Scene):
         self.play(Write(taylor_series), run_time=1.5)
         self.wait(1)
         
-        # Clear the left side to make room for the graph
+        
         self.play(
             FadeOut(derivatives_text),
             FadeOut(derivatives),
@@ -77,7 +77,7 @@ class TaylorSeriesEx(Scene):
             run_time=1
         )
         
-        # Set up coordinate system
+        
         axes = Axes(
             x_range=[-1, 3, 0.5],
             y_range=[-1, 8, 1],
@@ -89,7 +89,7 @@ class TaylorSeriesEx(Scene):
         axes.center()
         axes.shift(DOWN * 0.5)
         
-        # Labels
+        
         x_label = axes.get_x_axis_label("x", edge=RIGHT, direction=RIGHT, buff=0.1)
         y_label = axes.get_y_axis_label("y", edge=UP, direction=UP, buff=0.1)
         x_label.set_color(BLACK)
@@ -97,7 +97,7 @@ class TaylorSeriesEx(Scene):
         
         self.play(Create(axes), Write(x_label), Write(y_label), run_time=1)
         
-        # The actual exponential function
+        
         def exp_function(x):
             return np.exp(x)
         
@@ -112,7 +112,7 @@ class TaylorSeriesEx(Scene):
         
         self.play(Create(exp_graph), Write(exp_label), run_time=1.2)
         
-        # Show the compact series formula
+        
         series_formula = MathTex(
             r"e^x = \sum_{n=0}^{\infty} \frac{x^n}{n!}",
             font_size=36,
@@ -123,25 +123,25 @@ class TaylorSeriesEx(Scene):
         self.play(Write(series_formula), run_time=1)
         self.wait(0.5)
         
-        # Taylor polynomial functions
+        
         def taylor_poly(x, n_terms):
             result = np.zeros_like(x)
             for n in range(n_terms):
                 result += (x ** n) / np.math.factorial(n)
             return result
         
-        # Colors for different polynomial orders
+        
         colors = [BLUE, GREEN, ORANGE, PINK, YELLOW, TEAL]
         
-        # Show polynomials of increasing order
+        
         polynomials = []
         labels = []
         
         for n in range(1, 7):
-            # Create polynomial function
+            
             poly_func = lambda x, n=n: taylor_poly(x, n)
             
-            # Plot the polynomial
+            
             poly_graph = axes.plot(
                 poly_func,
                 x_range=[-1, 2.5 if n > 3 else 1.5],
@@ -149,9 +149,9 @@ class TaylorSeriesEx(Scene):
                 stroke_width=3
             )
             
-            # Create label showing the polynomial
+            
             terms = []
-            for i in range(min(n, 4)):  # Show first 4 terms explicitly
+            for i in range(min(n, 4)):  
                 if i == 0:
                     terms.append("1")
                 elif i == 1:
@@ -171,7 +171,7 @@ class TaylorSeriesEx(Scene):
             polynomials.append(poly_graph)
             labels.append(poly_label)
             
-            # Animate the polynomial appearing
+            
             self.play(
                 Create(poly_graph),
                 Write(poly_label),
@@ -179,7 +179,7 @@ class TaylorSeriesEx(Scene):
             )
             self.wait(0.3)
         
-        # Show convergence text
+        
         convergence_text = MathTex(
             r"\text{As } n \to \infty, \quad P_n(x) \to e^x",
             font_size=28,
@@ -190,9 +190,9 @@ class TaylorSeriesEx(Scene):
         self.play(Write(convergence_text), run_time=1)
         self.wait(1)
         
-        # Highlight the convergence by fading out lower-order polynomials
+        
         fade_out_objects = []
-        for i in range(3):  # Fade out first 3 polynomials
+        for i in range(3):  
             fade_out_objects.extend([polynomials[i], labels[i]])
         
         self.play(
@@ -200,11 +200,11 @@ class TaylorSeriesEx(Scene):
             run_time=1
         )
         
-        # Add a point to show convergence at a specific value
+        
         test_point = 1
         dot = Dot(axes.coords_to_point(test_point, np.exp(test_point)), color=RED, radius=0.08)
         
-        # Show the numerical convergence
+        
         convergence_table = VGroup(
             MathTex(r"\text{At } x = 1:", font_size=24, color=BLACK),
             MathTex(r"P_5(1) = 2.7167", font_size=20, color=colors[5]),

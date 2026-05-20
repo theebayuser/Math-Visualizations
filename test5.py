@@ -3,16 +3,16 @@ import numpy as np
 
 class PeanoCurve(Scene):
     def construct(self):
-        # ── Title ───────────────────────────────────────────────────────────
+        
         title_tex = Tex(r"The $\mathbb{P}$eano $\mathbb{C}$urve", font_size=40)
         title_tex.set_color_by_gradient(BLUE, RED)
         title_box = BackgroundRectangle(title_tex, color=BLACK, fill_opacity=0.75, buff=0.25)
         title = VGroup(title_box, title_tex).move_to(UP * 3.4) 
 
-        # ── Modern stats table ──────────────────────────────────────────────
+        
         def make_table(n_val, length_val, segments_val, use_math=False):
             col_w = [1.8, 2.6] 
-            # Give a little extra height if we are rendering fractions
+            
             row_h = 0.55 if use_math else 0.45 
             rows = [
                 ("n =", str(n_val)),
@@ -24,7 +24,7 @@ class PeanoCurve(Scene):
                 y = -r * row_h
                 lbl = Text(label, font_size=22, color=GREY_A).move_to([-col_w[0]/2, y, 0])
                 
-                # Switch to MathTex for beautiful LaTeX rendering on the final formulas
+                
                 if use_math:
                     val = MathTex(value, font_size=28, color=WHITE).move_to([col_w[1]/2, y, 0])
                 else:
@@ -39,7 +39,7 @@ class PeanoCurve(Scene):
 
             total_h = len(rows) * row_h
             
-            # Rounded corners on the table
+            
             border = RoundedRectangle(
                 corner_radius=0.2,
                 width=col_w[0] + col_w[1] + 0.4,
@@ -54,7 +54,7 @@ class PeanoCurve(Scene):
         curve_size = 4.2 
         center_offset = UP * 0.4 
 
-        # ── Recursive Generator ─────────────────────────────────────────────
+        
         def get_peano_points(order, size=curve_size):
             def generate_peano(n):
                 if n == 0:
@@ -90,7 +90,7 @@ class PeanoCurve(Scene):
             center = (pts_3d.min(axis=0) + pts_3d.max(axis=0)) / 2
             return pts_3d - center + center_offset
 
-        # ── SAFE CHUNKING WITH SOLID COLOR ──────────────────────────────────
+        
         def create_chunked_curve(pts, stroke_width, color=TEAL):
             max_verts = 15000 
             
@@ -108,18 +108,18 @@ class PeanoCurve(Scene):
                 
             return curve_group
 
-        # ── Animation ────────────────────────────────────────────────────────
+        
         curve_color = TEAL
         stroke_widths = [8, 6, 4, 2.5, 1.25, 0.5] 
         
-        # Pacing ramp: Speeds up initially, but explicitly slows down for the last iteration
+        
         dynamic_speeds = [2.0, 1.7, 1.4, 1.1, 1.8]
         dynamic_waits = [0.8, 0.7, 0.6, 0.5, 1.0]
 
         def get_math_length(n):
             return (3**n + 1) / 2.0
 
-        # Build Order 0 (Straight Vertical Line)
+        
         pts0 = np.array([[0, -curve_size/2, 0], [0, curve_size/2, 0]]) + center_offset
         curve = create_chunked_curve(pts0, stroke_widths[0], curve_color)
 
@@ -128,11 +128,11 @@ class PeanoCurve(Scene):
 
         self.add(title, tbl)
         
-        # Draw the initial line
+        
         self.play(Create(curve), run_time=1.5)
         self.wait(0.6)
 
-        # Loop through orders 1 to 5
+        
         for i in range(1, 6):
             new_pts = get_peano_points(i)
             new_curve = create_chunked_curve(new_pts, stroke_widths[i], curve_color)
@@ -151,7 +151,7 @@ class PeanoCurve(Scene):
             tbl = new_tbl
             self.wait(dynamic_waits[i - 1])
 
-        # ── Final Hausdorff Text Box ─────────────────────────────────────────
+        
         haus_text = Text("Hausdorff Dimension: 2", font_size=24, color=WHITE)
         haus_border = RoundedRectangle(
             corner_radius=0.15,
@@ -167,8 +167,8 @@ class PeanoCurve(Scene):
         self.play(FadeIn(haus_group, shift=DOWN * 0.2), run_time=1.2)
         self.wait(1.0)
 
-        # ── Replace Numbers with MathTex Formulas ────────────────────────────
-        # Enable use_math=True to format the LaTeX nicely
+        
+        
         final_tbl = make_table("n", r"\frac{3^n + 1}{2}", "9^n", use_math=True)
         final_tbl.move_to(DOWN * 2.6)
 
