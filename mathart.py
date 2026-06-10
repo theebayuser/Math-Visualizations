@@ -4,17 +4,13 @@ import numpy as np
 
 class MathArtShowcase(Scene):
     def construct(self):
-        # 1. Title
         title = Tex("Parameterized Functions", font_size=40)
         title.set_color_by_gradient(BLUE, RED)
         title.to_edge(UP, buff=0.3)
         self.add(title)
 
-        # Pre-initialize tracker to the first function's starting value 
-        # to prevent any weird flashing of "a = 0" at the beginning.
         a_tracker = ValueTracker(-20.0)
 
-        # 2. Dynamic 'a' Value Label (Moved down slightly, more opaque)
         def get_a_label():
             val = a_tracker.get_value()
             txt = Tex(f"$a = {val:.1f}$", font_size=32, color=YELLOW)
@@ -27,10 +23,6 @@ class MathArtShowcase(Scene):
 
         a_label = always_redraw(get_a_label)
 
-        # ---------------------------------------------------------
-        # FUNCTION 1: r = sin((a/5) * theta)
-        # Range: -20 to 20
-        # ---------------------------------------------------------
         axes1 = NumberPlane(
             x_range=[-1.5, 1.5], y_range=[-1.5, 1.5], 
             x_length=4.2, y_length=4.2,
@@ -65,10 +57,6 @@ class MathArtShowcase(Scene):
         self.play(a_tracker.animate.set_value(20.0), run_time=6.5, rate_func=linear)
         self.play(FadeOut(axes1), FadeOut(eq1), FadeOut(curve1), run_time=0.4)
 
-        # ---------------------------------------------------------
-        # FUNCTION 2: y = x * sin(ln(a! * x))
-        # Range: -30 to 30
-        # ---------------------------------------------------------
         a_tracker.set_value(-30.0)
         
         axes2 = NumberPlane(
@@ -101,10 +89,6 @@ class MathArtShowcase(Scene):
         self.play(a_tracker.animate.set_value(30.0), run_time=6.5, rate_func=linear)
         self.play(FadeOut(axes2), FadeOut(eq2), FadeOut(curve2), run_time=0.4)
 
-        # ---------------------------------------------------------
-        # FUNCTION 3: y = sin(ax) + a*sin(x)
-        # Range: -50 to 50
-        # ---------------------------------------------------------
         a_tracker.set_value(-50.0)
         
         axes3 = NumberPlane(
@@ -124,7 +108,6 @@ class MathArtShowcase(Scene):
                 lambda x: np.sin(a_tracker.get_value() * x) + a_tracker.get_value() * np.sin(x),
                 x_range=[-3, 3, 0.02]
             )
-            # Map hue to parameter 'a' for new range [-50, 50]
             alpha = (a_tracker.get_value() + 50) / 100
             base_color = interpolate_color(PINK, YELLOW, alpha)
             c.set_color_by_gradient(base_color, WHITE)
