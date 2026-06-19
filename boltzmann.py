@@ -3,7 +3,6 @@ import numpy as np
 import random
 import math
 
-# Force a vertical aspect ratio for shorts/TikTok
 config.pixel_width = 1080
 config.pixel_height = 1920
 config.frame_width = 10.8
@@ -12,15 +11,14 @@ config.frame_height = 19.2
 random.seed(42)
 np.random.seed(42)
 
-# --- COLORS & STYLE ---
 C_BG       = "#050505"
 C_WALL     = "#4a9eff"
 C_CURVE    = "#ff6b6b"
 
-# RGB Tuples for smooth color interpolation
-COLOR_SLOW_RGB  = (33, 150, 243)  # Blue
-COLOR_FAST_RGB  = (255, 235, 59)  # Yellow
-COLOR_START_RGB = (240, 240, 240) # Bright Gray/White initially
+
+COLOR_SLOW_RGB  = (33, 150, 243)  
+COLOR_FAST_RGB  = (255, 235, 59)  
+COLOR_START_RGB = (240, 240, 240) 
 
 def lerp_rgb(c1, c2, t):
     return tuple(int(c1[i] + (c2[i] - c1[i]) * t) for i in range(3))
@@ -32,17 +30,15 @@ def smoothstep(edge0, edge1, x):
     t = max(0.0, min(1.0, (x - edge0) / (edge1 - edge0)))
     return t * t * (3.0 - 2.0 * t)
 
-# --- DIMENSIONS ---
 LEFT_WALL  = -4.5
 RIGHT_WALL = 4.5
 DIVIDER_X  = -1.5
 
-# Moved the Box Apparatus UP
 BOT_WALL   = -0.5
 TOP_WALL   = 5.5  
 
 BIN_TOP    = 4.0  
-GAP_BOT    = 5.0  # Opening squeezed between 5.0 and 5.5
+GAP_BOT    = 5.0  
 
 NUM_BINS   = 15
 BIN_W      = (RIGHT_WALL - DIVIDER_X) / NUM_BINS
@@ -54,7 +50,6 @@ COUNT_FS    = 24
 TITLE_Y    = 8.0
 FORMULA_Y  = -5.0 
 
-# --- TIMING ---
 T_REST = 0.5
 T_BOIL = 1.0
 
@@ -87,11 +82,9 @@ class BallParams:
 def get_marble_pos(t, p):
     """Analytic pseudo-physics pathing"""
     if t < T_REST:
-        # 0. Motionless at the bottom
         return p.P_rest
         
     elif t < p.t_exit:
-        # 1. Agitated Chaos (Phase-Modulated Lissajous for erratic, snappy bouncing)
         angle_x = p.wx * t + p.px + 1.5 * np.sin(p.wx * 0.618 * t)
         angle_y = p.wy * t + p.py + 1.5 * np.sin(p.wy * 0.732 * t)
         
@@ -99,7 +92,6 @@ def get_marble_pos(t, p):
         target_y = p.cy + p.ry * np.sin(angle_y)
         
         if t < T_BOIL:
-            # Tween from resting pile to bouncing chaos
             alpha = smoothstep(T_REST, T_BOIL, t)
             return np.array([
                 p.P_rest[0] * (1 - alpha) + target_x * alpha,
@@ -110,9 +102,8 @@ def get_marble_pos(t, p):
             return np.array([target_x, target_y, 0.0])
         
     elif t < p.t_shoot:
-        # 2. Funneling Naturally: Shrink the bouncing bounds toward the exit hole over time
         alpha = (t - p.t_exit) / (p.t_shoot - p.t_exit)
-        ease_alpha = alpha ** 2 # Ease-in to funneling slowly
+        ease_alpha = alpha ** 2 
         
         cur_cx = p.cx * (1 - ease_alpha) + p.P_shoot[0] * ease_alpha
         cur_cy = p.cy * (1 - ease_alpha) + p.P_shoot[1] * ease_alpha
@@ -127,7 +118,6 @@ def get_marble_pos(t, p):
         return np.array([x, y, 0.0])
         
     elif t < p.t_drop:
-        # 3. Parabolic Trajectory into bins
         alpha = (t - p.t_shoot) / (p.t_drop - p.t_shoot)
         P0, P1, P2 = p.P_shoot, p.P_control, p.P_bin_top
         
@@ -136,22 +126,17 @@ def get_marble_pos(t, p):
         return np.array([x, y, 0.0])
         
     elif t < p.t_done:
-        # 4. Straight Drop into Bin
         alpha = (t - p.t_drop) / (p.t_done - p.t_drop)
         y = p.P_bin_top[1] + (p.P_stack[1] - p.P_bin_top[1]) * alpha
         return np.array([p.P_bin_top[0], y, 0.0])
         
     else:
-        # 5. Stacked at Rest
         return p.P_stack
 
 class BoltzmannDistribution(Scene):
     def construct(self):
         self.camera.background_color = C_BG
 
-        # ---------------------------
-        # TITLE
-        # ---------------------------
         bb_m  = MathTex(r"\mathbb{M}", font_size=96)
         t1    = Tex("axwell-",         font_size=86)
         bb_b  = MathTex(r"\mathbb{B}", font_size=96)
@@ -164,9 +149,6 @@ class BoltzmannDistribution(Scene):
         title.set_color_by_gradient("#ff6b6b", "#ffd93d", "#4a9eff")
         title.move_to(np.array([0.0, TITLE_Y, 0.0]))
 
-        # ---------------------------
-        # APPARATUS DRAWING
-        # ---------------------------
         box_lines = VGroup(
             Line([LEFT_WALL, BOT_WALL, 0], [LEFT_WALL, TOP_WALL, 0]),
             Line([RIGHT_WALL, BOT_WALL, 0], [RIGHT_WALL, TOP_WALL, 0]),
@@ -182,9 +164,6 @@ class BoltzmannDistribution(Scene):
         ])
         bin_lines.set_stroke(color=C_WALL, width=2, opacity=0.4)
 
-        # ---------------------------
-        # STATISTICS & BELL CURVE
-        # ---------------------------
         sigma = 3.0
         def mb_pdf(x):
             return x**2 * np.exp(-x**2 / (2 * sigma**2))
@@ -217,9 +196,6 @@ class BoltzmannDistribution(Scene):
         bell.set_stroke(color=C_CURVE, width=4)
         bell.set_fill(color=C_CURVE, opacity=0.1)
 
-        # ---------------------------
-        # FORMULA & MORE INFO
-        # ---------------------------
         formula = MathTex(
             r"P(v) \propto v^{2} e^{-\frac{mv^{2}}{2kT}}",
             font_size=72, color=WHITE
@@ -243,9 +219,6 @@ class BoltzmannDistribution(Scene):
 
         self.add(title, box_lines, bin_lines, bell, formula_group, legend)
 
-        # ---------------------------
-        # MID-ANIMATION SPEED SCALE
-        # ---------------------------
         bar_segments = VGroup(*[
             Rectangle(width=BIN_W, height=0.15).set_stroke(width=0).set_fill(
                 color=rgb_to_hex(lerp_rgb(COLOR_SLOW_RGB, COLOR_FAST_RGB, i / (NUM_BINS-1))), opacity=0.9
@@ -259,9 +232,6 @@ class BoltzmannDistribution(Scene):
         
         speed_scale = VGroup(bar_segments, slow_label, fast_label, speed_label)
 
-        # ---------------------------
-        # BALL PATH PARAMS
-        # ---------------------------
         all_params = []
         stack_counts = [0] * NUM_BINS
         
@@ -275,7 +245,6 @@ class BoltzmannDistribution(Scene):
             b_idx = bin_assignments[i]
             
             p.t_exit  = T_BOIL + 0.5 + i * (12.0 / NUM_BALLS) + random.uniform(-0.1, 0.1)
-            # Extent duration so it funnels naturally over 1 second instead of zipping out
             p.t_shoot = p.t_exit + 1.0 
             p.t_drop  = p.t_shoot + 0.7 + (b_idx * 0.04) + random.uniform(-0.05, 0.05)
             
@@ -317,9 +286,6 @@ class BoltzmannDistribution(Scene):
             
             all_params.append(p)
 
-        # ---------------------------
-        # VISUALS & ANIMATION
-        # ---------------------------
         time_tracker = ValueTracker(0.0)
         self.add(time_tracker)
         
@@ -345,7 +311,6 @@ class BoltzmannDistribution(Scene):
                 ct = time_tracker.get_value()
                 m.move_to(get_marble_pos(ct, p))
                 
-                # Dynamic Color Transition mid-simulation
                 if ct < T_MID:
                     color = rgb_to_hex(COLOR_START_RGB)
                 elif ct < T_MID + 1.0:
@@ -365,7 +330,6 @@ class BoltzmannDistribution(Scene):
             
         self.add(all_marbles)
 
-        # Label Updater
         def update_labels(m, dt):
             ct = time_tracker.get_value()
             counts = [0] * NUM_BINS
@@ -376,12 +340,8 @@ class BoltzmannDistribution(Scene):
                 count_labels[b].set_value(counts[b])
         count_labels.add_updater(update_labels)
 
-        # --- PLAY SEQUENCE ---
-        
-        # 1. Play first half of the simulation
         self.play(time_tracker.animate.set_value(T_MID), run_time=T_MID, rate_func=linear)
         
-        # 2. Fade in Speed Scale while time slowly progresses
         self.play(
             FadeIn(speed_scale, shift=UP*0.3),
             time_tracker.animate.set_value(T_MID + 1.0),
@@ -389,7 +349,6 @@ class BoltzmannDistribution(Scene):
             rate_func=linear
         )
         
-        # 3. Play remaining simulation
         remaining_time = total_time - (T_MID + 1.0)
         self.play(time_tracker.animate.set_value(total_time), run_time=remaining_time, rate_func=linear)
 
