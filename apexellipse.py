@@ -71,7 +71,7 @@ class ApexEllipse(Scene):
         title = Tex(r"$\mathbb{A}$pex $\mathbb{E}$llipse", font_size=40)
         title.set_color_by_gradient(BLUE, RED)
         title.move_to(UP * TITLE_Y)
-        self.play(Write(title), run_time=1.0)
+        self.add(title)
 
         ground = Line(LAUNCH + LEFT * 3.0, LAUNCH + RIGHT * 3.0,
                      color=GREY_C, stroke_width=2)

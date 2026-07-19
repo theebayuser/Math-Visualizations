@@ -6,6 +6,11 @@ from manim import *
 #  Scale the (a, b, c) right triangle by a, by b, and by c; the three
 #  copies tile a single rectangle whose top edge is c^2 and whose bottom
 #  edges are a^2 + b^2.  Same top, same bottom  =>  c^2 = a^2 + b^2.
+#
+#  Each copy is built with ONLY a similarity transform (uniform scale)
+#  followed by rigid motions (reflection / rotation / translation) -- never
+#  an arbitrary shape morph -- so it visibly stays "the same triangle,"
+#  just bigger and rigidly moved into place.
 # ----------------------------------------------------------------------
 
 # Vertical 9:16 (Instagram Reels)
@@ -14,8 +19,8 @@ config.frame_width = 8.0
 config.pixel_height = 1920
 config.pixel_width = 1080
 
-a = 1.8
-b = 1.35
+a = 1.4
+b = 1.05
 c = float(np.hypot(a, b))
 W = a * a + b * b          # rectangle width  (= c^2)
 Hh = a * b                 # rectangle height
@@ -38,10 +43,29 @@ PURP_V = [(0, a * b), (a * a, 0), (W, a * b)]
 RECT_OFF = RECT_C - np.array([W / 2, Hh / 2, 0.0])
 
 
-def slot_polygon(verts, color):
-    pts = [RECT_OFF + np.array([x, y, 0.0]) for x, y in verts]
-    return Polygon(*pts, fill_color=color, fill_opacity=0.9,
-                   stroke_color=BLACK, stroke_width=2)
+def solve_rigid_transform(verts, k):
+    """Given a piece's 3 target vertices (rectangle-local, 2D tuples) and its
+    scale factor k (relative to the original triangle with legs b along x
+    and a along y from its right-angle vertex), find the right-angle vertex
+    P0 and the rigid motion -- an optional reflection across the x-axis,
+    then a rotation -- that turns the axis-aligned scaled original
+    (legs (k*b, 0) and (0, k*a)) into this exact target triangle."""
+    verts = [np.array(v, dtype=float) for v in verts]
+    for i in range(3):
+        P = verts[i]
+        others = [verts[j] for j in range(3) if j != i]
+        for o1, o2 in (others, others[::-1]):
+            e1, e2 = o1 - P, o2 - P
+            if (abs(np.linalg.norm(e1) - k * b) < 1e-6
+                    and abs(np.linalg.norm(e2) - k * a) < 1e-6
+                    and abs(np.dot(e1, e2)) < 1e-6):
+                m1, m2 = e1 / (k * b), e2 / (k * a)
+                M = np.column_stack([m1, m2])
+                reflect = np.linalg.det(M) < 0
+                Mrot = M @ np.diag([1.0, -1.0]) if reflect else M
+                angle = np.degrees(np.arctan2(Mrot[1, 0], Mrot[0, 0]))
+                return P, reflect, angle
+    raise ValueError("no matching right-angle vertex found")
 
 
 def side_label(p, q, tex, color, out=1.0, buff=0.3, font_size=32):
@@ -64,14 +88,14 @@ class PythagoreanProof(Scene):
         title = Tex(r"$\mathbb{P}$ythagorean $\mathbb{T}$heorem", font_size=40)
         title.set_color_by_gradient(RED, PURPLE, BLUE)
         title.move_to(UP * TITLE_Y)
-        self.play(Write(title), run_time=1.0)
+        self.add(title)
 
         # ---- the reference triangle: legs a (vertical), b (horizontal) ----
         yellow = Polygon(ORIGIN, RIGHT * b, UP * a,
                          fill_color=C_ORIG, fill_opacity=0.9,
                          stroke_color=BLACK, stroke_width=2)
         yellow.shift(TRI_C - yellow.get_center_of_mass())
-        vo, vb, va = yellow.get_vertices()[:3]   # origin, bottom-right, top
+        vo, vb, va = yellow.get_vertices()[:3]   # right-angle vertex, b-vertex, a-vertex
         lab_a = side_label(vo, va, "a", C_ORIG, out=1.0, buff=0.25)
         lab_b = side_label(vo, vb, "b", C_ORIG, out=-1.0, buff=0.25)
         lab_c = side_label(vb, va, "c", C_ORIG, out=-1.0, buff=0.25)
@@ -80,36 +104,58 @@ class PythagoreanProof(Scene):
         self.play(FadeIn(lab_a), FadeIn(lab_b), FadeIn(lab_c), run_time=0.5)
         self.wait(0.4)
 
-        # ---- three scaled copies morph straight into their rectangle slots ----
         # world-space slot vertices (for the seam/edge labels)
         rv = [RECT_OFF + np.array([x, y, 0.0]) for x, y in RED_V]
         bv = [RECT_OFF + np.array([x, y, 0.0]) for x, y in BLUE_V]
         pv = [RECT_OFF + np.array([x, y, 0.0]) for x, y in PURP_V]
 
         stages = [
-            (r"\times\, a", C_XA, slot_polygon(RED_V, C_XA), [
+            (r"\times\, a", C_XA, RED_V, a, [
                 side_label(rv[0], rv[1], "a^2", C_XA, out=-1.0),        # bottom
                 side_label(rv[0], rv[2], "ab", C_XA, out=1.0),          # left
                 side_label(rv[1], rv[2], "ac", WHITE, out=-1.0, buff=0.32),  # seam
             ]),
-            (r"\times\, b", C_XB, slot_polygon(BLUE_V, C_XB), [
+            (r"\times\, b", C_XB, BLUE_V, b, [
                 side_label(bv[0], bv[1], "b^2", C_XB, out=-1.0),        # bottom
                 side_label(bv[1], bv[2], "ab", C_XB, out=-1.0),         # right
                 side_label(bv[0], bv[2], "bc", WHITE, out=1.0, buff=0.32),   # seam
             ]),
-            (r"\times\, c", C_XC, slot_polygon(PURP_V, C_XC), [
+            (r"\times\, c", C_XC, PURP_V, c, [
                 side_label(pv[0], pv[2], "c^2", C_XC, out=1.0),         # top
             ]),
         ]
 
         top_label = None
         bottom_labels = []
-        for cap_tex, col, slot, labels in stages:
+        for cap_tex, col, verts, k, labels in stages:
+            P0_local, reflect, angle = solve_rigid_transform(verts, k)
+            target_world = RECT_OFF + np.array([P0_local[0], P0_local[1], 0.0])
+            anchor = vo   # scale + reorient happen right at the original's own corner
+
             cap = MathTex(cap_tex, color=col, font_size=44)
-            cap.next_to(yellow, RIGHT, buff=0.9)
+            cap.next_to(yellow, RIGHT, buff=0.9).align_to(yellow, UP)
             self.play(FadeIn(cap, shift=LEFT * 0.2), run_time=0.4)
-            self.play(TransformFromCopy(yellow, slot), run_time=1.2)
-            self.play(FadeOut(cap), *[FadeIn(l) for l in labels], run_time=0.5)
+
+            # ---- 1. multiply: a pure, uniform scale about the fixed corner ----
+            copy = yellow.copy()
+            copy.set_color(col)
+            self.play(copy.animate.scale(k, about_point=anchor), run_time=0.9)
+
+            # ---- 2. only rigid motions from here: reflect, then rotate ----
+            if reflect:
+                self.play(copy.animate.flip(axis=RIGHT, about_point=anchor), run_time=0.5)
+            if abs(angle) > 1e-3:
+                self.play(copy.animate.rotate(angle * DEGREES, about_point=anchor),
+                          run_time=0.7)
+
+            # the piece is now fully "multiplied" and correctly oriented, just
+            # not yet in the rectangle -- hold so that state reads clearly
+            self.wait(0.4)
+            self.play(FadeOut(cap), run_time=0.3)
+
+            # ---- 3. add it to the rectangle: a pure translation ----
+            self.play(copy.animate.shift(target_world - anchor), run_time=1.0)
+            self.play(*[FadeIn(l) for l in labels], run_time=0.5)
             self.wait(0.3)
             if col == C_XC:
                 top_label = labels[0]

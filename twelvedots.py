@@ -64,7 +64,7 @@ class TwelveDots(Scene):
         title = Tex(r"$\mathbb{T}$welve $\mathbb{P}$oints", font_size=40)
         title.set_color_by_gradient(RED, BLUE)
         title.move_to(UP * TITLE_Y)
-        self.play(Write(title), run_time=1.0)
+        self.add(title)
 
         pts0 = ring_points(seed_offset=0.0)
         dots = make_dots(pts0)
