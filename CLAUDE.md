@@ -130,6 +130,18 @@ title.to_edge(UP, buff=0.35)  # or similar small buffer
   rendering, not just eyeball the two y-constants — it's easy to end up with
   the box border cutting through the caption text above it. Caught in
   `apexellipse.py`.
+- **`TracedPath` samples once per frame**, so a fast pen over a detailed curve
+  (e.g. a Fourier/epicycle draw) yields a coarse low-poly trace — at 15fps×17s
+  that's only ~255 vertices for the whole path. For a detailed reveal, don't
+  trace: precompute the full high-res curve as points and reveal it up to the
+  current time by slicing (`set_points_as_corners(pts[:int(t*M)])` in an
+  `always_redraw`), driven by the same `ValueTracker` as the moving parts. See
+  `fouriermessi.py`.
+- **Image processing is numpy/PIL/scipy only** — `cv2`, `skimage`, and even
+  `matplotlib` are NOT installed in either interpreter. So no `findContours`,
+  `find_contours`, or `plt.contour`. `fouriermessi.py` hand-rolls marching
+  squares + segment chaining + nearest-neighbour loop stitching in ~90 lines
+  of numpy; reuse that if you need contours/line-art from an image again.
 - **`Indicate` (and similar temporary-effect anims) restore the mobject's
   *original* state on finish.** So `self.play(m.animate.set_color(X),
   Indicate(m))` in a *single* play snaps the color right back — `Indicate`
